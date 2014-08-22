@@ -44,7 +44,7 @@ class VPNode<E> {
             // Partially sort the list such that all points closer than or equal to the threshold distance from the
             // vantage point come before the threshold point in the list and all points farther away come after the
             // threshold point.
-            this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.vantagePoint, points, this.distanceFunction);
+            this.threshold = this.thresholdSelectionStrategy.selectThreshold(points, this.vantagePoint, this.distanceFunction);
 
             try {
                 final int firstIndexPastThreshold =
@@ -79,7 +79,7 @@ class VPNode<E> {
 
             if (this.points.size() > this.capacity) {
                 try {
-                    this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.vantagePoint, this.points, this.distanceFunction);
+                    this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.points, this.vantagePoint, this.distanceFunction);
 
                     final int firstIndexPastThreshold =
                             VPNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
@@ -105,7 +105,7 @@ class VPNode<E> {
                 final ArrayList<E> collectedPoints = new ArrayList<E>(this.size());
                 this.addAllPointsToCollection(collectedPoints);
 
-                this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.vantagePoint, collectedPoints, this.distanceFunction);
+                this.threshold = this.thresholdSelectionStrategy.selectThreshold(collectedPoints, this.vantagePoint, this.distanceFunction);
 
                 try {
                     final int firstIndexPastThreshold =
@@ -153,6 +153,7 @@ class VPNode<E> {
         int i = 0;
         int j = points.size() - 1;
 
+        // This is, essentially, a single swapping quicksort iteration
         for (; i <= j; i++) {
             if (distanceFunction.getDistance(vantagePoint, points.get(i)) > threshold) {
                 for (; j >= i; j--) {
