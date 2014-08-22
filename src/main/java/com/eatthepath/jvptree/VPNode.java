@@ -3,6 +3,7 @@ package com.eatthepath.jvptree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 class VPNode<E> {
 
@@ -34,10 +35,12 @@ class VPNode<E> {
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
 
         if (points.size() > this.capacity) {
+            // All nodes must have a vantage point; choose one at random from the available points
+            this.vantagePoint = points.get(new Random().nextInt(points.size()));
+
             // Partially sort the list such that all points closer than or equal to the threshold distance from the
             // vantage point come before the threshold point in the list and all points farther away come after the
             // threshold point.
-            this.vantagePoint = points.get(0);
             this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.vantagePoint, points, this.distanceFunction);
 
             final int firstIndexPastThreshold;
