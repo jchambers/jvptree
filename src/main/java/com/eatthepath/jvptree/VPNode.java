@@ -1,6 +1,8 @@
 package com.eatthepath.jvptree;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 class VPNode<E> {
 
@@ -8,51 +10,46 @@ class VPNode<E> {
     private final DistanceFunction<E> distanceFunction;
     private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
 
+    private ArrayList<E> points;
+
     private E vantagePoint;
     private double threshold;
 
     private VPNode<E> closer;
     private VPNode<E> farther;
 
-    private ArrayList<E> points;
-
-    public VPNode(final E[] points, final int fromIndex, final int toIndex, final int capacity,
-            final DistanceFunction<E> distanceFunction, ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
+    public VPNode(final List<E> points, final int capacity, final DistanceFunction<E> distanceFunction,
+            final ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
 
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
         }
 
-        if (toIndex - fromIndex < 1) {
-            throw new IllegalArgumentException("Index range does not contain any points.");
+        if (points.isEmpty()) {
+            throw new IllegalArgumentException("Cannot create a VPNode with an empty list of points.");
         }
 
         this.capacity = capacity;
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
 
-        if (toIndex - fromIndex > this.capacity) {
+        if (points.size() > this.capacity) {
             // Partially sort the list such that all points closer than or equal to the threshold distance from the
             // vantage point come before the threshold point in the list and all points farther away come after the
             // threshold point.
-            this.vantagePoint = points[fromIndex];
-            this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.vantagePoint, points, fromIndex, toIndex, this.distanceFunction);
+            this.vantagePoint = points.get(0);
+            this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.vantagePoint, points, this.distanceFunction);
 
             final int firstIndexPastThreshold;
             {
-                int i = fromIndex;
-                int j = toIndex - 1;
+                int i = 0;
+                int j = points.size() - 1;
 
                 for (; i <= j; i++) {
-                    if (this.distanceFunction.getDistance(this.vantagePoint, points[i]) > this.threshold) {
+                    if (this.distanceFunction.getDistance(this.vantagePoint, points.get(i)) > this.threshold) {
                         for (; j >= i; j--) {
-                            if (this.distanceFunction.getDistance(this.vantagePoint, points[j]) <= this.threshold) {
-                                final E swap = points[i];
-                                points[i] = points[j];
-                                points[j] = swap;
-
-                                j -= 1;
-
+                            if (this.distanceFunction.getDistance(this.vantagePoint, points.get(j)) <= this.threshold) {
+                                Collections.swap(points, i, j--);
                                 break;
                             }
                         }
@@ -60,25 +57,21 @@ class VPNode<E> {
                 }
 
                 firstIndexPastThreshold =
-                        this.distanceFunction.getDistance(this.vantagePoint, points[i - 1]) > this.threshold ? i - 1 : i;
+                        this.distanceFunction.getDistance(this.vantagePoint, points.get(i - 1)) > this.threshold ? i - 1 : i;
             }
 
-            if (this.distanceFunction.getDistance(this.vantagePoint, points[fromIndex]) <= this.threshold &&
-                    this.distanceFunction.getDistance(this.vantagePoint, points[toIndex - 1]) > this.threshold) {
+            if (this.distanceFunction.getDistance(this.vantagePoint, points.get(0)) <= this.threshold &&
+                    this.distanceFunction.getDistance(this.vantagePoint, points.get(points.size() - 1)) > this.threshold) {
 
-                this.closer = new VPNode<E>(points, fromIndex, firstIndexPastThreshold, this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
-                this.farther = new VPNode<E>(points, firstIndexPastThreshold, toIndex, this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
+                this.closer = new VPNode<E>(points.subList(0, firstIndexPastThreshold), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
+                this.farther = new VPNode<E>(points.subList(firstIndexPastThreshold, points.size()), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
             }
         }
 
         if (this.closer == null) {
             // We didn't create child nodes, which means that either (a) we don't want to because the sub-array is
             // smaller than our desired capacity or (b) we can't due to some degenerate case.
-            this.points = new ArrayList<E>(fromIndex - toIndex);
-
-            for (int i = fromIndex; i < toIndex; i++) {
-                this.points.add(points[i]);
-            }
+            this.points = new ArrayList<E>(points);
         }
     }
 }
