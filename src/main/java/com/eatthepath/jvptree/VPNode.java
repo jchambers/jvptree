@@ -3,6 +3,7 @@ package com.eatthepath.jvptree;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -226,6 +227,13 @@ class VPNode<E> {
         }
 
         return pointsAdded;
+    }
+
+    public void collectIterators(final Collection<Iterator<E>> metaIterator) {
+        if (this.points == null) {
+            this.closer.collectIterators(metaIterator);
+            this.farther.collectIterators(metaIterator);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.eatthepath.jvptree;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -25,8 +26,13 @@ public class VPTree<E> implements Collection<E> {
     }
 
     public Iterator<E> iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        final ArrayList<Iterator<E>> iterators = new ArrayList<Iterator<E>>();
+
+        if (this.rootNode != null) {
+            this.rootNode.collectIterators(iterators);
+        }
+
+        return new MetaIterator<E>(iterators);
     }
 
     public Object[] toArray() {
