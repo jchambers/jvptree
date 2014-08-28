@@ -17,7 +17,6 @@ class VPNode<E> {
 
     private final E vantagePoint;
 
-    // Note to self: threshold is not meaningful
     private double threshold;
 
     private VPNode<E> closer;
