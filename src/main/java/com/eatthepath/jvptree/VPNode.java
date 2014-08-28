@@ -127,6 +127,47 @@ class VPNode<E> {
         }
     }
 
+    public void collectNearestNeighbors(final E queryPoint, final NearestNeighborCollector<E> collector) {
+        if (this.points == null) {
+            final VPNode<E> firstNodeSearched = this.getChildNodeForPoint(queryPoint);
+            firstNodeSearched.collectNearestNeighbors(queryPoint, collector);
+
+            final double distanceFromVantagePointToQueryPoint =
+                    this.distanceFunction.getDistance(this.vantagePoint, queryPoint);
+
+            final double distanceFromQueryPointToFarthestPoint =
+                    this.distanceFunction.getDistance(queryPoint, collector.getFarthestPoint());
+
+            if (firstNodeSearched == this.closer) {
+                // We've already searched the node that contains points within this node's threshold. We also want to
+                // search the farther node if the distance from the query point to the most distant point in the
+                // neighbor collector is greater than the distance from the query point to this node's threshold, since
+                // there could be a point outside of this node that's closer than the most distant neighbor we've found
+                // so far.
+
+                final double distanceFromQueryPointToThreshold = this.threshold - distanceFromVantagePointToQueryPoint;
+
+                if (distanceFromQueryPointToFarthestPoint > distanceFromQueryPointToThreshold) {
+                    this.farther.collectNearestNeighbors(queryPoint, collector);
+                }
+            } else {
+                // We've already searched the node that contains points beyond this node's threshold. We want to search
+                // the within-threshold node if it's "easier" to get from the query point to this node's region than it
+                // is to get from the query point to the most distant match, since there could be a point within this
+                // node's threshold that's closer than the most distant match.
+                double distanceFromQueryPointToThreshold = distanceFromVantagePointToQueryPoint - this.threshold;
+
+                if(distanceFromQueryPointToThreshold <= distanceFromQueryPointToFarthestPoint) {
+                    this.closer.collectNearestNeighbors(queryPoint, collector);
+                }
+            }
+        } else {
+            for (final E point : this.points) {
+                collector.offerPoint(point);
+            }
+        }
+    }
+
     private VPNode<E> getChildNodeForPoint(final E point) {
         return this.distanceFunction.getDistance(this.vantagePoint, point) <= this.threshold ? this.closer : this.farther;
     }
