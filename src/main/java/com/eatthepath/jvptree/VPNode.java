@@ -127,6 +127,15 @@ class VPNode<E> {
         }
     }
 
+    public boolean contains(final E point) {
+        return this.points == null ? this.getChildNodeForPoint(point).contains(point) : this.points.contains(point);
+    }
+
+    public boolean retainAll(final Collection<?> points) {
+        return this.points == null ?
+                this.closer.retainAll(points) || this.farther.retainAll(points) : this.points.retainAll(points);
+    }
+
     public void collectNearestNeighbors(final E queryPoint, final NearestNeighborCollector<E> collector) {
         if (this.points == null) {
             final VPNode<E> firstNodeSearched = this.getChildNodeForPoint(queryPoint);
