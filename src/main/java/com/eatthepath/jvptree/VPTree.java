@@ -6,7 +6,31 @@ import java.util.Iterator;
 
 public class VPTree<E> implements Collection<E> {
 
+    private final DistanceFunction<E> distanceFunction;
+    private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
+    private final int nodeCapacity;
+
     private VPNode<E> rootNode;
+
+    public static final int DEFAULT_NODE_CAPACITY = 32;
+
+    public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity) {
+        this(distanceFunction, thresholdSelectionStrategy, nodeCapacity, null);
+    }
+
+    public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
+        this.distanceFunction = distanceFunction;
+        this.thresholdSelectionStrategy = thresholdSelectionStrategy;
+        this.nodeCapacity = nodeCapacity;
+
+        if (points != null) {
+            this.rootNode = new VPNode<E>(
+                    new ArrayList<E>(points),
+                    this.nodeCapacity,
+                    this.distanceFunction,
+                    this.thresholdSelectionStrategy);
+        }
+    }
 
     public int size() {
         return this.rootNode == null ? 0 : this.rootNode.size();
@@ -64,7 +88,11 @@ public class VPTree<E> implements Collection<E> {
 
     public boolean add(final E point) {
         if (this.rootNode == null) {
-            // TODO Create a root node
+            this.rootNode = new VPNode<E>(
+                    java.util.Collections.singletonList(point),
+                    this.nodeCapacity,
+                    this.distanceFunction,
+                    this.thresholdSelectionStrategy);
         } else {
             this.rootNode.add(point);
         }
