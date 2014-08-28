@@ -229,10 +229,12 @@ class VPNode<E> {
         return pointsAdded;
     }
 
-    public void collectIterators(final Collection<Iterator<E>> metaIterator) {
+    public void collectIterators(final Collection<Iterator<E>> collection) {
         if (this.points == null) {
-            this.closer.collectIterators(metaIterator);
-            this.farther.collectIterators(metaIterator);
+            this.closer.collectIterators(collection);
+            this.farther.collectIterators(collection);
+        } else {
+            collection.add(this.points.iterator());
         }
     }
 
