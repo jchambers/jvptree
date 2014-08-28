@@ -168,6 +168,28 @@ class VPNode<E> {
         }
     }
 
+    public void collectAllWithinRange(final E queryPoint, final double maxDistance, final Collection<E> collection) {
+        if (this.points == null) {
+            double distanceFromVantagePointToQueryPoint =
+                    this.distanceFunction.getDistance(this.vantagePoint, queryPoint);
+
+            // We want to search any of this node's children that intersect with the query region
+            if (distanceFromVantagePointToQueryPoint <= this.threshold + maxDistance) {
+                this.closer.collectAllWithinRange(queryPoint, maxDistance, collection);
+            }
+
+            if (distanceFromVantagePointToQueryPoint + maxDistance > this.threshold) {
+                this.farther.collectAllWithinRange(queryPoint, maxDistance, collection);
+            }
+        } else {
+            for (final E point : this.points) {
+                if (this.distanceFunction.getDistance(this.vantagePoint, point) <= maxDistance) {
+                    collection.add(point);
+                }
+            }
+        }
+    }
+
     private VPNode<E> getChildNodeForPoint(final E point) {
         return this.distanceFunction.getDistance(this.vantagePoint, point) <= this.threshold ? this.closer : this.farther;
     }
