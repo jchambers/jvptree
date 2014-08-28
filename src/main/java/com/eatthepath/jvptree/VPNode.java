@@ -212,6 +212,22 @@ class VPNode<E> {
         }
     }
 
+    public int addPointsToArray(final Object[] array, final int offset) {
+        final int pointsAdded;
+
+        if (this.points == null) {
+            int pointsAddedFromCloserNode = this.closer.addPointsToArray(array, offset);
+            int pointsAddedFromFartherNode = this.farther.addPointsToArray(array, offset + pointsAddedFromCloserNode);
+
+            pointsAdded = pointsAddedFromCloserNode + pointsAddedFromFartherNode;
+        } else {
+            System.arraycopy(this.points.toArray(), 0, array, offset, this.points.size());
+            pointsAdded = this.points.size();
+        }
+
+        return pointsAdded;
+    }
+
     /**
      * 
      * @param points

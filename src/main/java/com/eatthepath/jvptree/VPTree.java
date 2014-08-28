@@ -30,13 +30,30 @@ public class VPTree<E> implements Collection<E> {
     }
 
     public Object[] toArray() {
-        // TODO Auto-generated method stub
-        return null;
+        final Object[] array = new Object[this.size()];
+
+        if (this.rootNode != null) {
+            this.rootNode.addPointsToArray(array, 0);
+        }
+
+        return array;
     }
 
-    public <T> T[] toArray(T[] a) {
-        // TODO Auto-generated method stub
-        return null;
+    @SuppressWarnings("unchecked")
+    public <T> T[] toArray(final T[] array) {
+        final T[] arrayToPopulate;
+
+        if (array.length < this.size()) {
+            arrayToPopulate = (T[])java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), this.size());
+        } else {
+            arrayToPopulate = array;
+        }
+
+        if (this.rootNode != null) {
+            this.rootNode.addPointsToArray(arrayToPopulate, 0);
+        }
+
+        return arrayToPopulate;
     }
 
     public boolean add(final E point) {
