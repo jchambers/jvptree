@@ -104,7 +104,7 @@ public class VPNodeTest {
     @Test
     public void testCollectNearestNeighbors() {
         final Integer queryPoint = TEST_NODE_SIZE / 2;
-        final Integer numberOfNeighbors = 3;
+        final int numberOfNeighbors = 3;
 
         for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final NearestNeighborCollector<Integer> collector =
@@ -112,7 +112,7 @@ public class VPNodeTest {
 
             testNode.collectNearestNeighbors(collector);
 
-            assertEquals(numberOfNeighbors.intValue(), collector.toSortedList().size());
+            assertEquals(numberOfNeighbors, collector.toSortedList().size());
             assertEquals(queryPoint, collector.toSortedList().get(0));
             assertTrue(collector.toSortedList().containsAll(
                     java.util.Arrays.asList(new Integer[] { queryPoint - 1, queryPoint, queryPoint + 1 })));
@@ -122,7 +122,7 @@ public class VPNodeTest {
     @Test
     public void testCollectAllWithinRange() {
         final Integer queryPoint = TEST_NODE_SIZE / 2;
-        final Integer maxRange = TEST_NODE_SIZE / 8;
+        final int maxRange = TEST_NODE_SIZE / 8;
 
         for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final ArrayList<Integer> collectedPoints = new ArrayList<Integer>();

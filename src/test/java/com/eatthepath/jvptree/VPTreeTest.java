@@ -3,6 +3,8 @@ package com.eatthepath.jvptree;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -12,12 +14,47 @@ public class VPTreeTest {
 
     @Test
     public void testGetNearestNeighbors() {
-        fail("Not yet implemented");
+        final int numberOfPoints = 256;
+        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            points.add(i);
+        }
+
+        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+
+        final Integer queryPoint = numberOfPoints / 2;
+        final int numberOfNeighbors = 3;
+
+        final List<Integer> nearestNeighbors = vpTree.getNearestNeighbors(queryPoint, numberOfNeighbors);
+
+        assertEquals(numberOfNeighbors, nearestNeighbors.size());
+        assertEquals(queryPoint, nearestNeighbors.get(0));
+        assertTrue(nearestNeighbors.containsAll(
+                java.util.Arrays.asList(new Integer[] { queryPoint - 1, queryPoint, queryPoint + 1 })));
     }
 
     @Test
     public void testGetAllWithinRange() {
-        fail("Not yet implemented");
+        final int numberOfPoints = 256;
+        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            points.add(i);
+        }
+
+        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+
+        final Integer queryPoint = numberOfPoints / 2;
+        final int maxDistance = numberOfPoints / 8;
+
+        final List<Integer> pointsWithinRange = vpTree.getAllWithinRange(queryPoint, maxDistance);
+
+        assertEquals((2 * maxDistance) + 1, pointsWithinRange.size());
+
+        for (int i = queryPoint - maxDistance; i <= queryPoint + maxDistance; i++) {
+            assertTrue(pointsWithinRange.contains(i));
+        }
     }
 
     @Test
@@ -188,21 +225,103 @@ public class VPTreeTest {
 
     @Test
     public void testContainsAll() {
-        fail("Not yet implemented");
+        final int numberOfPoints = 256;
+        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            points.add(i);
+        }
+
+        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+
+        assertTrue(vpTree.containsAll(points));
+
+        points.add(numberOfPoints + 1);
+        assertFalse(vpTree.containsAll(points));
     }
 
     @Test
     public void testIterator() {
-        fail("Not yet implemented");
+        final int numberOfPoints = 256;
+        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            points.add(i);
+        }
+
+        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+
+        final ArrayList<Integer> pointsFromIterator = new ArrayList<Integer>();
+        final Iterator<Integer> iterator = vpTree.iterator();
+
+        while (iterator.hasNext()) {
+            pointsFromIterator.add(iterator.next());
+        }
+
+        assertEquals(points.size(), pointsFromIterator.size());
+        assertTrue(pointsFromIterator.containsAll(points));
     }
 
     @Test
     public void testToArray() {
-        fail("Not yet implemented");
+        final int numberOfPoints = 256;
+        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            points.add(i);
+        }
+
+        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+        final Object[] array = vpTree.toArray();
+
+        assertEquals(vpTree.size(), array.length);
+
+        for (final Object point : array) {
+            assertTrue(vpTree.contains(point));
+        }
     }
 
     @Test
     public void testToArrayTArray() {
-        fail("Not yet implemented");
+        final int numberOfPoints = 256;
+        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+
+        for (int i = 0; i < numberOfPoints; i++) {
+            points.add(i);
+        }
+
+        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+
+        {
+            final Integer[] array = vpTree.toArray(new Integer[0]);
+
+            assertEquals(vpTree.size(), array.length);
+
+            for (final Integer point : array) {
+                assertTrue(vpTree.contains(point));
+            }
+        }
+
+        {
+            final Integer[] array = vpTree.toArray(new Integer[vpTree.size()]);
+
+            assertEquals(vpTree.size(), array.length);
+
+            for (final Integer point : array) {
+                assertTrue(vpTree.contains(point));
+            }
+        }
+
+        {
+            final Integer[] array = vpTree.toArray(new Integer[vpTree.size() + 1]);
+
+            assertEquals(vpTree.size() + 1, array.length);
+
+            for (int i = 0; i < vpTree.size(); i++) {
+                assertTrue(vpTree.contains(array[i]));
+            }
+
+            assertNull(array[vpTree.size()]);
+        }
     }
 }
