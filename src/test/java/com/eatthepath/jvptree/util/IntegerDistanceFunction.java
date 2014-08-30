@@ -1,4 +1,6 @@
-package com.eatthepath.jvptree;
+package com.eatthepath.jvptree.util;
+
+import com.eatthepath.jvptree.DistanceFunction;
 
 public class IntegerDistanceFunction implements DistanceFunction<Integer> {
 

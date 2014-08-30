@@ -2,7 +2,7 @@ package com.eatthepath.jvptree;
 
 import java.util.Comparator;
 
-class DistanceComparator<T> implements Comparator<T> {
+public class DistanceComparator<T> implements Comparator<T> {
     private final T origin;
     private final DistanceFunction<T> distanceFunction;
 

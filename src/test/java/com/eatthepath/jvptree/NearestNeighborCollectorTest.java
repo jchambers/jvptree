@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.eatthepath.jvptree.util.IntegerDistanceFunction;
+
 public class NearestNeighborCollectorTest {
 
     private NearestNeighborCollector<Integer> collector;
