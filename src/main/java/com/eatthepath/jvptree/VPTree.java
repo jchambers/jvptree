@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
+
 public class VPTree<E> implements Collection<E> {
 
     private final DistanceFunction<E> distanceFunction;
@@ -12,7 +14,15 @@ public class VPTree<E> implements Collection<E> {
 
     private VPNode<E> rootNode;
 
-    public static final int DEFAULT_NODE_CAPACITY = 32;
+    public VPTree(final DistanceFunction<E> distanceFunction) {
+        this(distanceFunction,
+                new SamplingMedianDistanceThresholdSelectionStrategy<E>(
+                        SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES));
+    }
+
+    public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
+        this(distanceFunction, thresholdSelectionStrategy, VPNode.DEFAULT_NODE_CAPACITY);
+    }
 
     public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity) {
         this(distanceFunction, thresholdSelectionStrategy, nodeCapacity, null);
@@ -26,9 +36,9 @@ public class VPTree<E> implements Collection<E> {
         if (points != null) {
             this.rootNode = new VPNode<E>(
                     new ArrayList<E>(points),
-                    this.nodeCapacity,
                     this.distanceFunction,
-                    this.thresholdSelectionStrategy);
+                    this.thresholdSelectionStrategy,
+                    this.nodeCapacity);
         }
     }
 
@@ -90,9 +100,9 @@ public class VPTree<E> implements Collection<E> {
         if (this.rootNode == null) {
             this.rootNode = new VPNode<E>(
                     java.util.Collections.singletonList(point),
-                    this.nodeCapacity,
                     this.distanceFunction,
-                    this.thresholdSelectionStrategy);
+                    this.thresholdSelectionStrategy,
+                    this.nodeCapacity);
         } else {
             this.rootNode.add(point);
         }

@@ -22,8 +22,10 @@ class VPNode<E> {
     private VPNode<E> closer;
     private VPNode<E> farther;
 
-    public VPNode(final List<E> points, final int capacity, final DistanceFunction<E> distanceFunction,
-            final ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
+    public static final int DEFAULT_NODE_CAPACITY = 32;
+
+    public VPNode(final List<E> points, final DistanceFunction<E> distanceFunction,
+            final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int capacity) {
 
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
@@ -50,8 +52,8 @@ class VPNode<E> {
                 final int firstIndexPastThreshold =
                         VPNode.partitionPoints(points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                this.closer = new VPNode<E>(points.subList(0, firstIndexPastThreshold), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
-                this.farther = new VPNode<E>(points.subList(firstIndexPastThreshold, points.size()), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
+                this.closer = new VPNode<E>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                this.farther = new VPNode<E>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
             } catch (PartitionException e) {
                 // We couldn't partition the list, so just store all of the points in this node
                 this.points = new ArrayList<E>(points);
@@ -84,8 +86,8 @@ class VPNode<E> {
                     final int firstIndexPastThreshold =
                             VPNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                    this.closer = new VPNode<E>(this.points.subList(0, firstIndexPastThreshold), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
-                    this.farther = new VPNode<E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
+                    this.closer = new VPNode<E>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.farther = new VPNode<E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
 
                     this.points = null;
                 } catch (PartitionException e) {
@@ -111,8 +113,8 @@ class VPNode<E> {
                     final int firstIndexPastThreshold =
                             VPNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                    this.closer = new VPNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
-                    this.farther = new VPNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.capacity, this.distanceFunction, this.thresholdSelectionStrategy);
+                    this.closer = new VPNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.farther = new VPNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
                 } catch (PartitionException e) {
                     this.closer = null;
                     this.farther = null;

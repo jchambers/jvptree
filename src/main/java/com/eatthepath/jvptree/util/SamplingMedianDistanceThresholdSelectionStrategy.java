@@ -10,6 +10,8 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<T> extends MedianD
 
     private final int numberOfSamples;
 
+    public static final int DEFAULT_NUMBER_OF_SAMPLES = 32;
+
     public SamplingMedianDistanceThresholdSelectionStrategy(final int numberOfSamples) {
         this.numberOfSamples = numberOfSamples;
     }
