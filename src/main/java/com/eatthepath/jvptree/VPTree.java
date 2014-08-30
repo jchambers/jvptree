@@ -37,7 +37,7 @@ public class VPTree<E> implements Collection<E> {
     }
 
     public boolean isEmpty() {
-        return this.size() == 0;
+        return this.rootNode == null;
     }
 
     @SuppressWarnings("unchecked")
