@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Test;
 
@@ -102,7 +103,20 @@ public class VPNodeTest {
 
     @Test
     public void testCollectNearestNeighbors() {
-        fail("Not yet implemented");
+        final Integer queryPoint = TEST_NODE_SIZE / 2;
+        final Integer numberOfNeighbors = 3;
+
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            final NearestNeighborCollector<Integer> collector =
+                    new NearestNeighborCollector<Integer>(queryPoint, new IntegerDistanceFunction(), numberOfNeighbors);
+
+            testNode.collectNearestNeighbors(collector);
+
+            assertEquals(numberOfNeighbors.intValue(), collector.toSortedList().size());
+            assertEquals(queryPoint, collector.toSortedList().get(0));
+            assertTrue(collector.toSortedList().containsAll(
+                    java.util.Arrays.asList(new Integer[] { queryPoint - 1, queryPoint, queryPoint + 1 })));
+        }
     }
 
     @Test
@@ -125,12 +139,31 @@ public class VPNodeTest {
 
     @Test
     public void testAddPointsToArray() {
-        fail("Not yet implemented");
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            final Integer[] array = new Integer[TEST_NODE_SIZE];
+            testNode.addPointsToArray(array, 0);
+
+            assertFalse(testNode.retainAll(java.util.Arrays.asList(array)));
+        }
     }
 
     @Test
     public void testCollectIterators() {
-        fail("Not yet implemented");
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            final ArrayList<Iterator<Integer>> iterators = new ArrayList<Iterator<Integer>>();
+            testNode.collectIterators(iterators);
+
+            final ArrayList<Integer> pointsFromIterators = new ArrayList<Integer>();
+
+            for (final Iterator<Integer> iterator : iterators) {
+                while (iterator.hasNext()) {
+                    pointsFromIterators.add(iterator.next());
+                }
+            }
+
+            assertEquals(testNode.size(), pointsFromIterators.size());
+            assertFalse(testNode.retainAll(pointsFromIterators));
+        }
     }
 
     private Collection<VPNode<Integer>> createTestNodes(final int nodeSize) {
