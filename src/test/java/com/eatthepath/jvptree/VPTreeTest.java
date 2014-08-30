@@ -12,18 +12,13 @@ import com.eatthepath.jvptree.util.IntegerDistanceFunction;
 
 public class VPTreeTest {
 
+    private static final int TEST_TREE_SIZE = 256;
+
     @Test
     public void testGetNearestNeighbors() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+        final VPTree<Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
-        for (int i = 0; i < numberOfPoints; i++) {
-            points.add(i);
-        }
-
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
-
-        final Integer queryPoint = numberOfPoints / 2;
+        final Integer queryPoint = TEST_TREE_SIZE / 2;
         final int numberOfNeighbors = 3;
 
         final List<Integer> nearestNeighbors = vpTree.getNearestNeighbors(queryPoint, numberOfNeighbors);
@@ -36,17 +31,10 @@ public class VPTreeTest {
 
     @Test
     public void testGetAllWithinRange() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+        final VPTree<Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
-        for (int i = 0; i < numberOfPoints; i++) {
-            points.add(i);
-        }
-
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
-
-        final Integer queryPoint = numberOfPoints / 2;
-        final int maxDistance = numberOfPoints / 8;
+        final Integer queryPoint = TEST_TREE_SIZE / 2;
+        final int maxDistance = TEST_TREE_SIZE / 8;
 
         final List<Integer> pointsWithinRange = vpTree.getAllWithinRange(queryPoint, maxDistance);
 
@@ -59,10 +47,9 @@ public class VPTreeTest {
 
     @Test
     public void testSize() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
+        final ArrayList<Integer> points = new ArrayList<Integer>();
 
-        for (int i = 0; i < numberOfPoints; i++) {
+        for (int i = 0; i < TEST_TREE_SIZE; i++) {
             points.add(i);
         }
 
@@ -87,7 +74,7 @@ public class VPTreeTest {
 
     @Test
     public void testIsEmpty() {
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction());
+        final VPTree<Integer> vpTree = this.createTestTree(0);
         final Integer testPoint = 12;
 
         assertTrue(vpTree.isEmpty());
@@ -101,7 +88,7 @@ public class VPTreeTest {
 
     @Test
     public void testAdd() {
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction());
+        final VPTree<Integer> vpTree = this.createTestTree(0);
         final Integer testPoint = 12;
 
         assertFalse(vpTree.contains(testPoint));
@@ -112,7 +99,7 @@ public class VPTreeTest {
 
     @Test
     public void testAddAll() {
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction());
+        final VPTree<Integer> vpTree = this.createTestTree(0);
 
         final int numberOfPoints = 256;
         final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
@@ -128,7 +115,7 @@ public class VPTreeTest {
 
     @Test
     public void testRemove() {
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction());
+        final VPTree<Integer> vpTree = this.createTestTree(0);
         final Integer testPoint = 12;
 
         assertFalse(vpTree.remove(testPoint));
@@ -140,22 +127,16 @@ public class VPTreeTest {
 
     @Test
     public void testRemoveAll() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
-        final ArrayList<Integer> pointsToRemove = new ArrayList<Integer>(numberOfPoints / 2);
+        final ArrayList<Integer> pointsToRemove = new ArrayList<Integer>();
 
-        for (int i = 0; i < numberOfPoints; i++) {
-            points.add(i);
-
-            if (i % 2 == 0) {
-                pointsToRemove.add(i);
-            }
+        for (int i = 0; i < TEST_TREE_SIZE; i += 2) {
+            pointsToRemove.add(i);
         }
 
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+        final VPTree<Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
         assertTrue(vpTree.removeAll(pointsToRemove));
-        assertEquals(points.size() - pointsToRemove.size(), vpTree.size());
+        assertEquals(TEST_TREE_SIZE - pointsToRemove.size(), vpTree.size());
 
         for (final Integer point : pointsToRemove) {
             assertFalse(vpTree.contains(point));
@@ -166,19 +147,13 @@ public class VPTreeTest {
 
     @Test
     public void testRetainAll() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
-        final ArrayList<Integer> pointsToRetain = new ArrayList<Integer>(numberOfPoints / 2);
+        final ArrayList<Integer> pointsToRetain = new ArrayList<Integer>();
 
-        for (int i = 0; i < numberOfPoints; i++) {
-            points.add(i);
-
-            if (i % 2 == 0) {
-                pointsToRetain.add(i);
-            }
+        for (int i = 0; i < TEST_TREE_SIZE; i += 2) {
+            pointsToRetain.add(i);
         }
 
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+        final VPTree<Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
         assertTrue(vpTree.retainAll(pointsToRetain));
         assertEquals(pointsToRetain.size(), vpTree.size());
@@ -192,14 +167,7 @@ public class VPTreeTest {
 
     @Test
     public void testClear() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
-
-        for (int i = 0; i < numberOfPoints; i++) {
-            points.add(i);
-        }
-
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+        final VPTree<Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
         assertFalse(vpTree.isEmpty());
 
@@ -209,7 +177,8 @@ public class VPTreeTest {
 
     @Test
     public void testContains() {
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction());
+        final VPTree<Integer> vpTree = this.createTestTree(0);
+
         final Integer pointAdded = 12;
         final Integer pointNotAdded = 7;
 
@@ -283,14 +252,7 @@ public class VPTreeTest {
 
     @Test
     public void testToArrayTArray() {
-        final int numberOfPoints = 256;
-        final ArrayList<Integer> points = new ArrayList<Integer>(numberOfPoints);
-
-        for (int i = 0; i < numberOfPoints; i++) {
-            points.add(i);
-        }
-
-        final VPTree<Integer> vpTree = new VPTree<Integer>(new IntegerDistanceFunction(), points);
+        final VPTree<Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
         {
             final Integer[] array = vpTree.toArray(new Integer[0]);
@@ -323,5 +285,21 @@ public class VPTreeTest {
 
             assertNull(array[vpTree.size()]);
         }
+    }
+
+    private VPTree<Integer> createTestTree(final int numberOfPoints) {
+        final List<Integer> points;
+
+        if (numberOfPoints == 0) {
+            points = null;
+        } else {
+            points = new ArrayList<Integer>(numberOfPoints);
+
+            for (int i = 0; i < numberOfPoints; i++) {
+                points.add(i);
+            }
+        }
+
+        return new VPTree<Integer>(new IntegerDistanceFunction(), points);
     }
 }
