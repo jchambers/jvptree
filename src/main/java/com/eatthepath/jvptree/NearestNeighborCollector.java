@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+/**
+ * A utility class that uses a priority queue to efficiently collect results for a k-nearest-neighbors query in a
+ * vp-tree.
+ * 
+ * @author <a href="https://github.com/jchambers">Jon Chambers</a>
+ *
+ * @param <E>
+ */
 class NearestNeighborCollector<E> {
     private final E queryPoint;
     private final int capacity;
@@ -14,6 +22,17 @@ class NearestNeighborCollector<E> {
 
     private double distanceToFarthestPoint;
 
+    /**
+     * Constructs a new nearest neighbor collector that selectively accepts points that are close to the given query
+     * point as determined by the given distance function. Up to the given number of nearest neighbors are collected,
+     * and if neighbors are found that are closer than points in the current set, the most distant previously collected
+     * point is replaced with the closer candidate.
+     * 
+     * @param queryPoint the point for which nearest neighbors are to be collected
+     * @param distanceFunction the distance function to be used to determine the distance between the query point and
+     * potential neighbors
+     * @param capacity the maximum number of nearest neighbors to collect
+     */
     public NearestNeighborCollector(final E queryPoint, final DistanceFunction<E> distanceFunction, final int capacity) {
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
@@ -29,10 +48,22 @@ class NearestNeighborCollector<E> {
                 new PriorityQueue<E>(this.capacity, java.util.Collections.reverseOrder(this.distanceComparator));
     }
 
+    /**
+     * Returns the query point for this collector.
+     * 
+     * @return the query point for this collector
+     */
     public E getQueryPoint() {
         return this.queryPoint;
     }
 
+    /**
+     * Offers a point to this collector. The point may or may not be added to the collection; points will only be added
+     * if the collector is not already full, or if the collector is full, but the offered point is closer to the query
+     * point than the most distant point already in the collection.
+     * 
+     * @param point the point to offer to this collector
+     */
     public void offerPoint(final E point) {
         final boolean pointAdded;
 
@@ -58,10 +89,20 @@ class NearestNeighborCollector<E> {
         }
     }
 
+    /**
+     * Returns the point retained by this collector that is the farthest from the query point.
+     * 
+     * @return the point retained by this collector that is the farthest from the query point
+     */
     public E getFarthestPoint() {
         return this.priorityQueue.peek();
     }
 
+    /**
+     * Returns a list of points retained by this collector, sorted by distance from the query point.
+     * 
+     * @return a list of points retained by this collector, sorted by distance from the query point
+     */
     public List<E> toSortedList() {
         final ArrayList<E> sortedList = new ArrayList<E>(this.priorityQueue);
         java.util.Collections.sort(sortedList, this.distanceComparator);
