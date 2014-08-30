@@ -3,6 +3,7 @@ package com.eatthepath.jvptree;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Test;
 
@@ -10,6 +11,8 @@ import com.eatthepath.jvptree.util.IntegerDistanceFunction;
 import com.eatthepath.jvptree.util.MedianDistanceThresholdSelectionStrategy;
 
 public class VPNodeTest {
+
+    private static final int TEST_NODE_SIZE = 32;
 
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeNoPoints() {
@@ -25,236 +28,75 @@ public class VPNodeTest {
 
     @Test
     public void testSize() {
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 16; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> unpartitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            assertEquals(points.size(), unpartitionedNode.size());
-        }
-
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 256; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> partitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            assertEquals(points.size(), partitionedNode.size());
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            assertEquals(TEST_NODE_SIZE, testNode.size());
         }
     }
 
     @Test
     public void testAdd() {
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
+        final Integer testPoint = TEST_NODE_SIZE * 2;
 
-            for (int i = 0; i < 16; i++) {
-                points.add(i);
-            }
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            assertFalse(testNode.contains(testPoint));
 
-            final VPNode<Integer> unpartitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
+            testNode.add(testPoint);
 
-            assertEquals(points.size(), unpartitionedNode.size());
-
-            unpartitionedNode.add(7000);
-
-            assertEquals(points.size() + 1, unpartitionedNode.size());
-            assertTrue(unpartitionedNode.contains(7000));
-        }
-
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 16; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> atCapacityNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size());
-
-            assertEquals(points.size(), atCapacityNode.size());
-
-            atCapacityNode.add(7000);
-
-            assertEquals(points.size() + 1, atCapacityNode.size());
-            assertTrue(atCapacityNode.contains(7000));
-        }
-
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 256; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> partitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            assertEquals(points.size(), partitionedNode.size());
-
-            partitionedNode.add(7000);
-
-            assertEquals(points.size() + 1, partitionedNode.size());
-            assertTrue(partitionedNode.contains(7000));
+            assertEquals(TEST_NODE_SIZE + 1, testNode.size());
+            assertTrue(testNode.contains(testPoint));
         }
     }
 
     @Test
     public void testRemove() {
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
+        final Integer pointNotInNode = TEST_NODE_SIZE * 2;
+        final Integer pointInNode = TEST_NODE_SIZE / 2;
 
-            for (int i = 0; i < 16; i++) {
-                points.add(i);
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            assertFalse(testNode.remove(pointNotInNode));
+            assertTrue(testNode.remove(pointInNode));
+
+            assertEquals(TEST_NODE_SIZE - 1, testNode.size());
+            assertFalse(testNode.contains(pointInNode));
+
+            for (int i = 0; i < TEST_NODE_SIZE; i++) {
+                testNode.remove(i);
             }
 
-            final VPNode<Integer> unpartitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            assertEquals(points.size(), unpartitionedNode.size());
-
-            assertFalse(unpartitionedNode.remove(7000));
-            assertTrue(unpartitionedNode.remove(8));
-
-            assertEquals(points.size() - 1, unpartitionedNode.size());
-            assertFalse(unpartitionedNode.contains(8));
-
-            for (int i = 0; i < 16; i++) {
-                unpartitionedNode.remove(i);
-            }
-
-            assertEquals(0, unpartitionedNode.size());
-        }
-
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 256; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> partitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            assertEquals(points.size(), partitionedNode.size());
-
-            assertFalse(partitionedNode.remove(7000));
-            assertTrue(partitionedNode.remove(8));
-
-            assertEquals(points.size() - 1, partitionedNode.size());
-            assertFalse(partitionedNode.contains(8));
-
-            for (int i = 0; i < 256; i++) {
-                partitionedNode.remove(i);
-            }
-
-            assertEquals(0, partitionedNode.size());
+            assertEquals(0, testNode.size());
         }
     }
 
     @Test
     public void testContains() {
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
+        final Integer pointNotInNode = TEST_NODE_SIZE * 2;
 
-            for (int i = 0; i < 16; i++) {
-                points.add(i);
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            for (int i = 0; i < TEST_NODE_SIZE; i++) {
+                assertTrue(testNode.contains(i));
             }
 
-            final VPNode<Integer> unpartitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            for (int i = 0; i < 16; i++) {
-                assertTrue(unpartitionedNode.contains(i));
-            }
-
-            assertFalse(unpartitionedNode.contains(7000));
-        }
-
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 256; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> partitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            for (int i = 0; i < 256; i++) {
-                assertTrue(partitionedNode.contains(i));
-            }
-
-            assertFalse(partitionedNode.contains(7000));
+            assertFalse(testNode.contains(pointNotInNode));
         }
     }
 
     @Test
     public void testRetainAll() {
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
+        final ArrayList<Integer> pointsToRetain = new ArrayList<Integer>();
 
-            for (int i = 0; i < 16; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> unpartitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            final ArrayList<Integer> pointsToRetain = new ArrayList<Integer>();
-
-            for (int i = 0; i < 4; i++) {
-                pointsToRetain.add(i);
-            }
-
-            assertTrue(unpartitionedNode.retainAll(pointsToRetain));
-
-            assertEquals(4, unpartitionedNode.size());
-
-            for (int point : pointsToRetain) {
-                assertTrue(unpartitionedNode.contains(point));
-            }
-
-            assertFalse(unpartitionedNode.retainAll(pointsToRetain));
+        for (int i = 0; i < TEST_NODE_SIZE / 8; i++) {
+            pointsToRetain.add(i);
         }
 
-        {
-            final ArrayList<Integer> points = new ArrayList<Integer>();
-
-            for (int i = 0; i < 256; i++) {
-                points.add(i);
-            }
-
-            final VPNode<Integer> partitionedNode = new VPNode<Integer>(points, new IntegerDistanceFunction(),
-                    new MedianDistanceThresholdSelectionStrategy<Integer>(), 32);
-
-            assertEquals(points.size(), partitionedNode.size());
-
-            final ArrayList<Integer> pointsToRetain = new ArrayList<Integer>();
-
-            for (int i = 0; i < 4; i++) {
-                pointsToRetain.add(i);
-            }
-
-            assertTrue(partitionedNode.retainAll(pointsToRetain));
-
-            assertEquals(4, partitionedNode.size());
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            assertTrue(testNode.retainAll(pointsToRetain));
+            assertEquals(pointsToRetain.size(), testNode.size());
 
             for (int point : pointsToRetain) {
-                assertTrue(partitionedNode.contains(point));
+                assertTrue(testNode.contains(point));
             }
 
-            assertFalse(partitionedNode.retainAll(pointsToRetain));
+            assertFalse(testNode.retainAll(pointsToRetain));
         }
     }
 
@@ -265,7 +107,20 @@ public class VPNodeTest {
 
     @Test
     public void testCollectAllWithinRange() {
-        fail("Not yet implemented");
+        final Integer queryPoint = TEST_NODE_SIZE / 2;
+        final Integer maxRange = TEST_NODE_SIZE / 8;
+
+        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+            final ArrayList<Integer> collectedPoints = new ArrayList<Integer>();
+
+            testNode.collectAllWithinRange(queryPoint, maxRange, collectedPoints);
+
+            assertEquals((2 * maxRange) + 1, collectedPoints.size());
+
+            for (int i = queryPoint - maxRange; i <= queryPoint + maxRange; i++) {
+                assertTrue(collectedPoints.contains(i));
+            }
+        }
     }
 
     @Test
@@ -276,5 +131,26 @@ public class VPNodeTest {
     @Test
     public void testCollectIterators() {
         fail("Not yet implemented");
+    }
+
+    private Collection<VPNode<Integer>> createTestNodes(final int nodeSize) {
+        final ArrayList<Integer> points = new ArrayList<Integer>(nodeSize);
+
+        for (int i = 0; i < nodeSize; i++) {
+            points.add(i);
+        }
+
+        final ArrayList<VPNode<Integer>> testNodes = new ArrayList<VPNode<Integer>>(3);
+
+        testNodes.add(new VPNode<Integer>(points, new IntegerDistanceFunction(),
+                new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size() * 2));
+
+        testNodes.add(new VPNode<Integer>(points, new IntegerDistanceFunction(),
+                new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size()));
+
+        testNodes.add(new VPNode<Integer>(points, new IntegerDistanceFunction(),
+                new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size() / 8));
+
+        return testNodes;
     }
 }

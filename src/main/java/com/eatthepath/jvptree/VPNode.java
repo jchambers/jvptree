@@ -212,7 +212,7 @@ class VPNode<E> {
             }
         } else {
             for (final E point : this.points) {
-                if (this.distanceFunction.getDistance(this.vantagePoint, point) <= maxDistance) {
+                if (this.distanceFunction.getDistance(queryPoint, point) <= maxDistance) {
                     collection.add(point);
                 }
             }
