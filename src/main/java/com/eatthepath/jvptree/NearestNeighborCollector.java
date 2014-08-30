@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 class NearestNeighborCollector<E> {
-    private final E origin;
+    private final E queryPoint;
     private final int capacity;
 
     private final DistanceFunction<E> distanceFunction;
@@ -14,19 +14,23 @@ class NearestNeighborCollector<E> {
 
     private double distanceToFarthestPoint;
 
-    public NearestNeighborCollector(final E origin, final DistanceFunction<E> distanceFunction, final int capacity) {
+    public NearestNeighborCollector(final E queryPoint, final DistanceFunction<E> distanceFunction, final int capacity) {
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
         }
 
-        this.origin = origin;
+        this.queryPoint = queryPoint;
         this.distanceFunction = distanceFunction;
         this.capacity = capacity;
 
-        this.distanceComparator = new DistanceComparator<E>(origin, distanceFunction);
+        this.distanceComparator = new DistanceComparator<E>(queryPoint, distanceFunction);
 
         this.priorityQueue =
                 new PriorityQueue<E>(this.capacity, java.util.Collections.reverseOrder(this.distanceComparator));
+    }
+
+    public E getQueryPoint() {
+        return this.queryPoint;
     }
 
     public void offerPoint(final E point) {
@@ -38,7 +42,7 @@ class NearestNeighborCollector<E> {
         } else {
             assert this.priorityQueue.size() > 0;
 
-            final double distanceToNewPoint = this.distanceFunction.getDistance(this.origin, point);
+            final double distanceToNewPoint = this.distanceFunction.getDistance(this.queryPoint, point);
 
             if (distanceToNewPoint < this.distanceToFarthestPoint) {
                 this.priorityQueue.poll();
@@ -50,7 +54,7 @@ class NearestNeighborCollector<E> {
         }
 
         if (pointAdded) {
-            this.distanceToFarthestPoint = this.distanceFunction.getDistance(this.origin, this.priorityQueue.peek());
+            this.distanceToFarthestPoint = this.distanceFunction.getDistance(this.queryPoint, this.priorityQueue.peek());
         }
     }
 

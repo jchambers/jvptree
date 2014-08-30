@@ -104,23 +104,7 @@ class VPNode<E> {
             final boolean modified = childNode.remove(point);
 
             if (childNode.size() == 0) {
-                final ArrayList<E> collectedPoints = new ArrayList<E>(this.size());
-                this.addAllPointsToCollection(collectedPoints);
-
-                this.threshold = this.thresholdSelectionStrategy.selectThreshold(collectedPoints, this.vantagePoint, this.distanceFunction);
-
-                try {
-                    final int firstIndexPastThreshold =
-                            VPNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
-
-                    this.closer = new VPNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                    this.farther = new VPNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                } catch (PartitionException e) {
-                    this.closer = null;
-                    this.farther = null;
-
-                    this.points = collectedPoints;
-                }
+                this.redistributePointsFromChildNodes();
             }
 
             return modified;
@@ -129,25 +113,59 @@ class VPNode<E> {
         }
     }
 
+    public boolean retainAll(final Collection<?> points) {
+        final boolean modified;
+
+        if (this.points == null) {
+            final boolean modifiedCloser = this.closer.retainAll(points);
+            final boolean modifiedFarther = this.farther.retainAll(points);
+
+            modified = modifiedCloser || modifiedFarther;
+
+            if ((this.closer.size() == 0 || this.farther.size() == 0) && this.size() > 0) {
+                this.redistributePointsFromChildNodes();
+            }
+        } else {
+            modified = this.points.retainAll(points);
+        }
+
+        return modified;
+    }
+
+    private void redistributePointsFromChildNodes() {
+        final ArrayList<E> collectedPoints = new ArrayList<E>(this.size());
+        this.addAllPointsToCollection(collectedPoints);
+
+        this.threshold = this.thresholdSelectionStrategy.selectThreshold(collectedPoints, this.vantagePoint, this.distanceFunction);
+
+        try {
+            final int firstIndexPastThreshold =
+                    VPNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
+
+            this.closer = new VPNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            this.farther = new VPNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+        } catch (PartitionException e) {
+            this.closer = null;
+            this.farther = null;
+
+            this.points = collectedPoints;
+        }
+    }
+
     public boolean contains(final E point) {
         return this.points == null ? this.getChildNodeForPoint(point).contains(point) : this.points.contains(point);
     }
 
-    public boolean retainAll(final Collection<?> points) {
-        return this.points == null ?
-                this.closer.retainAll(points) || this.farther.retainAll(points) : this.points.retainAll(points);
-    }
-
-    public void collectNearestNeighbors(final E queryPoint, final NearestNeighborCollector<E> collector) {
+    public void collectNearestNeighbors(final NearestNeighborCollector<E> collector) {
         if (this.points == null) {
-            final VPNode<E> firstNodeSearched = this.getChildNodeForPoint(queryPoint);
-            firstNodeSearched.collectNearestNeighbors(queryPoint, collector);
+            final VPNode<E> firstNodeSearched = this.getChildNodeForPoint(collector.getQueryPoint());
+            firstNodeSearched.collectNearestNeighbors(collector);
 
             final double distanceFromVantagePointToQueryPoint =
-                    this.distanceFunction.getDistance(this.vantagePoint, queryPoint);
+                    this.distanceFunction.getDistance(this.vantagePoint, collector.getQueryPoint());
 
             final double distanceFromQueryPointToFarthestPoint =
-                    this.distanceFunction.getDistance(queryPoint, collector.getFarthestPoint());
+                    this.distanceFunction.getDistance(collector.getQueryPoint(), collector.getFarthestPoint());
 
             if (firstNodeSearched == this.closer) {
                 // We've already searched the node that contains points within this node's threshold. We also want to
@@ -159,7 +177,7 @@ class VPNode<E> {
                 final double distanceFromQueryPointToThreshold = this.threshold - distanceFromVantagePointToQueryPoint;
 
                 if (distanceFromQueryPointToFarthestPoint > distanceFromQueryPointToThreshold) {
-                    this.farther.collectNearestNeighbors(queryPoint, collector);
+                    this.farther.collectNearestNeighbors(collector);
                 }
             } else {
                 // We've already searched the node that contains points beyond this node's threshold. We want to search
@@ -169,7 +187,7 @@ class VPNode<E> {
                 double distanceFromQueryPointToThreshold = distanceFromVantagePointToQueryPoint - this.threshold;
 
                 if(distanceFromQueryPointToThreshold <= distanceFromQueryPointToFarthestPoint) {
-                    this.closer.collectNearestNeighbors(queryPoint, collector);
+                    this.closer.collectNearestNeighbors(collector);
                 }
             }
         } else {

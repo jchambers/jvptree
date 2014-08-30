@@ -3,6 +3,7 @@ package com.eatthepath.jvptree;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
 
@@ -40,6 +41,36 @@ public class VPTree<E> implements Collection<E> {
                     this.thresholdSelectionStrategy,
                     this.nodeCapacity);
         }
+    }
+
+    public List<E> getNearestNeighbors(final E queryPoint, final int maxResults) {
+        final List<E> nearestNeighbors;
+
+        if (this.rootNode == null) {
+            nearestNeighbors = null;
+        } else {
+            final NearestNeighborCollector<E> collector =
+                    new NearestNeighborCollector<E>(queryPoint, this.distanceFunction, maxResults);
+
+            this.rootNode.collectNearestNeighbors(collector);
+
+            nearestNeighbors = collector.toSortedList();
+        }
+
+        return nearestNeighbors;
+    }
+
+    public List<E> getAllWithinRange(final E queryPoint, final double maxDistance) {
+        final List<E> pointsWithinRange;
+
+        if (this.rootNode == null) {
+            pointsWithinRange = null;
+        } else {
+            pointsWithinRange = new ArrayList<E>();
+            this.rootNode.collectAllWithinRange(queryPoint, maxDistance, pointsWithinRange);
+        }
+
+        return pointsWithinRange;
     }
 
     public int size() {
