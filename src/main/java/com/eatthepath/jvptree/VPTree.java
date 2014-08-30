@@ -21,6 +21,12 @@ public class VPTree<E> implements Collection<E> {
                         SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES));
     }
 
+    public VPTree(final DistanceFunction<E> distanceFunction, final Collection<E> points) {
+        this(distanceFunction, new SamplingMedianDistanceThresholdSelectionStrategy<E>(
+                SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES),
+                VPNode.DEFAULT_NODE_CAPACITY, points);
+    }
+
     public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
         this(distanceFunction, thresholdSelectionStrategy, VPNode.DEFAULT_NODE_CAPACITY);
     }
@@ -172,7 +178,7 @@ public class VPTree<E> implements Collection<E> {
         boolean pointRemoved = false;
 
         for (final Object point : points) {
-            pointRemoved = pointRemoved || this.remove(point);
+            pointRemoved = this.remove(point) || pointRemoved;
         }
 
         return pointRemoved;
