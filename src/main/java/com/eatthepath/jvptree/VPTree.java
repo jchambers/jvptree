@@ -7,7 +7,26 @@ import java.util.List;
 
 import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
 
-public class VPTree<E> implements Collection<E> {
+/**
+ * <p>A vantage-point tree (or vp-tree) is a binary space-partitioned collection of points in a metric space. The main
+ * feature of vantage point trees is that they allow for k-nearest-neighbor searches in any metric space in
+ * <em>O(log(n))</em> time.</p>
+ * 
+ * <p>Vantage point trees recursively partition points by choosing a &quot;vantage point&quot; and a distance threshold;
+ * points are then partitioned into one collection that contains all of the points closer to the vantage point than the
+ * chosen threshold and one collection that contains all of the points farther away than the chosen threshold.</p>
+ * 
+ * <p>A {@linkplain DistanceFunction distance function} that satisfies the properties of a metric space must be provided
+ * when constructing a vantage point tree. Callers may also specify a threshold selection strategy (a sampling median
+ * strategy is used by default) and a node size to tune the ratio of nodes searched to points inspected per node.
+ * Vantage point trees may be constructed with or without an initial collection of points, though specifying a
+ * collection of points at construction time is the most efficient approach.</p>
+ * 
+ * @author <a href="https://github.com/jchambers">Jon Chambers</a>
+ *
+ * @param <E>
+ */
+public class VPTree<E> implements SpatialIndex<E> {
 
     private final DistanceFunction<E> distanceFunction;
     private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
@@ -16,9 +35,7 @@ public class VPTree<E> implements Collection<E> {
     private VPNode<E> rootNode;
 
     public VPTree(final DistanceFunction<E> distanceFunction) {
-        this(distanceFunction,
-                new SamplingMedianDistanceThresholdSelectionStrategy<E>(
-                        SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES));
+        this(distanceFunction, null);
     }
 
     public VPTree(final DistanceFunction<E> distanceFunction, final Collection<E> points) {
@@ -27,20 +44,26 @@ public class VPTree<E> implements Collection<E> {
                 VPNode.DEFAULT_NODE_CAPACITY, points);
     }
 
-    public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
-        this(distanceFunction, thresholdSelectionStrategy, VPNode.DEFAULT_NODE_CAPACITY);
-    }
-
     public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity) {
         this(distanceFunction, thresholdSelectionStrategy, nodeCapacity, null);
     }
 
+    /**
+     * Constructs a new vp-tree that uses the given distance function and threshold selection strategy to partition
+     * points. The tree will attempt to partition nodes that contain more than {@code nodeCapacity} points, and will
+     * be initially populated with the given collection of points.
+     * 
+     * @param distanceFunction the distance function to use to calculate the distance between points
+     * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
+     * @param nodeCapacity the largest capacity a node may have before it should be partitioned
+     * @param points the points with which this tree should be initially populated; may be {@code null}
+     */
     public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
         this.nodeCapacity = nodeCapacity;
 
-        if (points != null) {
+        if (points != null && !points.isEmpty()) {
             this.rootNode = new VPNode<E>(
                     new ArrayList<E>(points),
                     this.distanceFunction,
@@ -79,14 +102,26 @@ public class VPTree<E> implements Collection<E> {
         return pointsWithinRange;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#size()
+     */
     public int size() {
         return this.rootNode == null ? 0 : this.rootNode.size();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#isEmpty()
+     */
     public boolean isEmpty() {
         return this.size() == 0;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#contains(java.lang.Object)
+     */
     @SuppressWarnings("unchecked")
     public boolean contains(final Object o) {
         try {
@@ -96,6 +131,10 @@ public class VPTree<E> implements Collection<E> {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#iterator()
+     */
     public Iterator<E> iterator() {
         final ArrayList<Iterator<E>> iterators = new ArrayList<Iterator<E>>();
 
@@ -106,6 +145,10 @@ public class VPTree<E> implements Collection<E> {
         return new MetaIterator<E>(iterators);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#toArray()
+     */
     public Object[] toArray() {
         final Object[] array = new Object[this.size()];
 
@@ -116,6 +159,10 @@ public class VPTree<E> implements Collection<E> {
         return array;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#toArray(java.lang.Object[])
+     */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(final T[] array) {
         final T[] arrayToPopulate;
@@ -133,6 +180,10 @@ public class VPTree<E> implements Collection<E> {
         return arrayToPopulate;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#add(java.lang.Object)
+     */
     public boolean add(final E point) {
         if (this.rootNode == null) {
             this.rootNode = new VPNode<E>(
@@ -148,6 +199,10 @@ public class VPTree<E> implements Collection<E> {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#remove(java.lang.Object)
+     */
     @SuppressWarnings("unchecked")
     public boolean remove(final Object point) {
         try {
@@ -157,6 +212,10 @@ public class VPTree<E> implements Collection<E> {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#containsAll(java.util.Collection)
+     */
     public boolean containsAll(final Collection<?> points) {
         for (final Object point : points) {
             if (!this.contains(point)) { return false; }
@@ -165,6 +224,10 @@ public class VPTree<E> implements Collection<E> {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#addAll(java.util.Collection)
+     */
     public boolean addAll(final Collection<? extends E> points) {
         for (final E point : points) {
             this.add(point);
@@ -174,6 +237,10 @@ public class VPTree<E> implements Collection<E> {
         return !points.isEmpty();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#removeAll(java.util.Collection)
+     */
     public boolean removeAll(final Collection<?> points) {
         boolean pointRemoved = false;
 
@@ -184,10 +251,18 @@ public class VPTree<E> implements Collection<E> {
         return pointRemoved;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#retainAll(java.util.Collection)
+     */
     public boolean retainAll(final Collection<?> points) {
         return this.rootNode == null ? false : this.rootNode.retainAll(points);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#clear()
+     */
     public void clear() {
         this.rootNode = null;
     }
