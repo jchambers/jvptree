@@ -34,18 +34,26 @@ public class VPTree<E> implements SpatialIndex<E> {
 
     private VPNode<E> rootNode;
 
+    /**
+     * Constructs a new vp-tree that uses the given distance function and is initially empty.
+     * 
+     * @param distanceFunction the distance function to use to calculate the distance between points
+     */
     public VPTree(final DistanceFunction<E> distanceFunction) {
         this(distanceFunction, null);
     }
 
+    /**
+     * Constructs a new vp-tree that uses the given distance function and is initially populated with the given
+     * collection of points.
+     * 
+     * @param distanceFunction the distance function to use to calculate the distance between points
+     * @param points the points with which this tree should be initially populated; may be {@code null}
+     */
     public VPTree(final DistanceFunction<E> distanceFunction, final Collection<E> points) {
         this(distanceFunction, new SamplingMedianDistanceThresholdSelectionStrategy<E>(
                 SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES),
                 VPNode.DEFAULT_NODE_CAPACITY, points);
-    }
-
-    public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity) {
-        this(distanceFunction, thresholdSelectionStrategy, nodeCapacity, null);
     }
 
     /**
@@ -72,6 +80,19 @@ public class VPTree<E> implements SpatialIndex<E> {
         }
     }
 
+    /**
+     * Returns the function used to calculate distances between points in this vp-tree.
+     * 
+     * @return the function used to calculate distances between points in this vp-tree
+     */
+    public DistanceFunction<E> getDistanceFunction() {
+        return this.distanceFunction;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see com.eatthepath.jvptree.SpatialIndex#getNearestNeighbors(java.lang.Object, int)
+     */
     public List<E> getNearestNeighbors(final E queryPoint, final int maxResults) {
         final List<E> nearestNeighbors;
 
@@ -89,6 +110,10 @@ public class VPTree<E> implements SpatialIndex<E> {
         return nearestNeighbors;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.eatthepath.jvptree.SpatialIndex#getAllWithinRange(java.lang.Object, double)
+     */
     public List<E> getAllWithinRange(final E queryPoint, final double maxDistance) {
         final List<E> pointsWithinRange;
 
