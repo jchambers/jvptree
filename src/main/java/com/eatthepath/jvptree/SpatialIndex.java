@@ -20,7 +20,7 @@ public interface SpatialIndex<E> extends Collection<E> {
      * @return a list of the nearest neighbors to the given query point sorted by increasing distance from the query
      * point
      */
-    public <T extends E> List<E> getNearestNeighbors(T queryPoint, int maxResults);
+    public List<E> getNearestNeighbors(E queryPoint, int maxResults);
 
     /**
      * Returns a list of all points within a given distance to a query point.
@@ -32,5 +32,5 @@ public interface SpatialIndex<E> extends Collection<E> {
      * @return a list of all points within the given distance to the query point; the returned list is sorted in order
      * of increasing distance from the query point
      */
-    public <T extends E> List<E> getAllWithinRange(T queryPoint, double maxDistance);
+    public List<E> getAllWithinRange(E queryPoint, double maxDistance);
 }

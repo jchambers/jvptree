@@ -84,7 +84,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getNearestNeighbors(java.lang.Object, int)
      */
-    public <T extends E> List<E> getNearestNeighbors(T queryPoint, int maxResults) {
+    public List<E> getNearestNeighbors(E queryPoint, int maxResults) {
         final List<E> nearestNeighbors;
 
         if (this.rootNode == null) {
@@ -105,7 +105,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getAllWithinRange(java.lang.Object, double)
      */
-    public <T extends E> List<E> getAllWithinRange(final T queryPoint, final double maxDistance) {
+    public List<E> getAllWithinRange(final E queryPoint, final double maxDistance) {
         final List<E> pointsWithinRange;
 
         if (this.rootNode == null) {
