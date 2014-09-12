@@ -66,7 +66,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<?super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
         this.nodeCapacity = nodeCapacity;
