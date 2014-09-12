@@ -41,7 +41,7 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<T> extends MedianD
      * @return the median distance from the origin to the given list of points
      */
     @Override
-    public double selectThreshold(final List<T> points, final T origin, final DistanceFunction<T> distanceFunction) {
+    public double selectThreshold(final List<T> points, final T origin, final DistanceFunction<? super T> distanceFunction) {
         return super.selectThreshold(this.getSampledPoints(points), origin, distanceFunction);
     }
 

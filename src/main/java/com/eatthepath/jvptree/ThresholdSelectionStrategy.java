@@ -24,5 +24,5 @@ public interface ThresholdSelectionStrategy<T> {
      * @return a partitioning threshold distance appropriate for the given list of points; ideally, some points should
      * be closer to the origin than the returned threshold, and some should be farther
      */
-    double selectThreshold(List<T> points, T origin, DistanceFunction<T> distanceFunction);
+    double selectThreshold(List<T> points, T origin, DistanceFunction<? super T> distanceFunction);
 }

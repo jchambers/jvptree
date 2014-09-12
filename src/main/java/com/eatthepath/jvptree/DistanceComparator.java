@@ -12,7 +12,7 @@ import java.util.Comparator;
  */
 public class DistanceComparator<T> implements Comparator<T> {
     private final T origin;
-    private final DistanceFunction<T> distanceFunction;
+    private final DistanceFunction<? super T> distanceFunction;
 
     /**
      * Constructs a new distance comparator with the given origin point and distance function.
@@ -20,7 +20,7 @@ public class DistanceComparator<T> implements Comparator<T> {
      * @param origin the point from which distances to other points will be calculated
      * @param distanceFunction the function that calculates the distance between the origin and the given points
      */
-    public DistanceComparator(final T origin, final DistanceFunction<T> distanceFunction) {
+    public DistanceComparator(final T origin, final DistanceFunction<? super T> distanceFunction) {
         this.origin = origin;
         this.distanceFunction = distanceFunction;
     }

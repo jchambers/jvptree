@@ -28,7 +28,7 @@ import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrat
  */
 public class VPTree<E> implements SpatialIndex<E> {
 
-    private final DistanceFunction<E> distanceFunction;
+    private final DistanceFunction<? super E> distanceFunction;
     private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
     private final int nodeCapacity;
 
@@ -39,7 +39,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * 
      * @param distanceFunction the distance function to use to calculate the distance between points
      */
-    public VPTree(final DistanceFunction<E> distanceFunction) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction) {
         this(distanceFunction, null);
     }
 
@@ -50,7 +50,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<E> distanceFunction, final Collection<E> points) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction, final Collection<E> points) {
         this(distanceFunction, new SamplingMedianDistanceThresholdSelectionStrategy<E>(
                 SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES),
                 VPNode.DEFAULT_NODE_CAPACITY, points);
@@ -66,7 +66,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
+    public VPTree(final DistanceFunction<?super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
         this.nodeCapacity = nodeCapacity;
@@ -78,15 +78,6 @@ public class VPTree<E> implements SpatialIndex<E> {
                     this.thresholdSelectionStrategy,
                     this.nodeCapacity);
         }
-    }
-
-    /**
-     * Returns the function used to calculate distances between points in this vp-tree.
-     * 
-     * @return the function used to calculate distances between points in this vp-tree
-     */
-    public DistanceFunction<E> getDistanceFunction() {
-        return this.distanceFunction;
     }
 
     /*

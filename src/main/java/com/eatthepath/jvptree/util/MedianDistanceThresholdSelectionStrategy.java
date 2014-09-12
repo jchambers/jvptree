@@ -25,7 +25,7 @@ public class MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSel
      * 
      * @return the median distance from the origin to the given list of points
      */
-    public double selectThreshold(final List<T> points, final T origin, final DistanceFunction<T> distanceFunction) {
+    public double selectThreshold(final List<T> points, final T origin, final DistanceFunction<? super T> distanceFunction) {
         // TODO This is terrible and should be replaced with quickselect or introselect
         java.util.Collections.sort(points, new DistanceComparator<T>(origin, distanceFunction));
         return distanceFunction.getDistance(origin, points.get(points.size() / 2));

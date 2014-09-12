@@ -16,7 +16,7 @@ class NearestNeighborCollector<E> {
     private final E queryPoint;
     private final int capacity;
 
-    private final DistanceFunction<E> distanceFunction;
+    private final DistanceFunction<? super E> distanceFunction;
     private final DistanceComparator<E> distanceComparator;
     private final PriorityQueue<E> priorityQueue;
 
@@ -33,7 +33,7 @@ class NearestNeighborCollector<E> {
      * potential neighbors
      * @param capacity the maximum number of nearest neighbors to collect
      */
-    public NearestNeighborCollector(final E queryPoint, final DistanceFunction<E> distanceFunction, final int capacity) {
+    public NearestNeighborCollector(final E queryPoint, final DistanceFunction<? super E> distanceFunction, final int capacity) {
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
         }

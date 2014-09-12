@@ -10,7 +10,7 @@ import java.util.Random;
 class VPNode<E> {
 
     private final int capacity;
-    private final DistanceFunction<E> distanceFunction;
+    private final DistanceFunction<? super E> distanceFunction;
     private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
 
     private ArrayList<E> points;
@@ -24,7 +24,7 @@ class VPNode<E> {
 
     public static final int DEFAULT_NODE_CAPACITY = 32;
 
-    public VPNode(final List<E> points, final DistanceFunction<E> distanceFunction,
+    public VPNode(final List<E> points, final DistanceFunction<? super E> distanceFunction,
             final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int capacity) {
 
         if (capacity < 1) {
@@ -266,7 +266,7 @@ class VPNode<E> {
      * @return the index of the first point in the list that falls beyond the distance threshold
      * @throws PartitionException
      */
-    private static <E> int partitionPoints(final List<E> points, final E vantagePoint, final double threshold, final DistanceFunction<E> distanceFunction) throws PartitionException {
+    private static <E> int partitionPoints(final List<E> points, final E vantagePoint, final double threshold, final DistanceFunction<? super E> distanceFunction) throws PartitionException {
         int i = 0;
         int j = points.size() - 1;
 
