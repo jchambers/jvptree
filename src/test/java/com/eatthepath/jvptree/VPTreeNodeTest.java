@@ -11,25 +11,25 @@ import org.junit.Test;
 import com.eatthepath.jvptree.util.IntegerDistanceFunction;
 import com.eatthepath.jvptree.util.MedianDistanceThresholdSelectionStrategy;
 
-public class VPNodeTest {
+public class VPTreeNodeTest {
 
     private static final int TEST_NODE_SIZE = 32;
 
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeNoPoints() {
-        new VPNode<Integer>(new ArrayList<Integer>(), new IntegerDistanceFunction(),
-                new MedianDistanceThresholdSelectionStrategy<Integer>(), VPNode.DEFAULT_NODE_CAPACITY);
+        new VPTreeNode<Integer>(new ArrayList<Integer>(), new IntegerDistanceFunction(),
+                new MedianDistanceThresholdSelectionStrategy<Integer>(), VPTreeNode.DEFAULT_NODE_CAPACITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeZeroCapacity() {
-        new VPNode<Integer>(java.util.Collections.singletonList(7), new IntegerDistanceFunction(),
+        new VPTreeNode<Integer>(java.util.Collections.singletonList(7), new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Integer>(), 0);
     }
 
     @Test
     public void testSize() {
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             assertEquals(TEST_NODE_SIZE, testNode.size());
         }
     }
@@ -38,7 +38,7 @@ public class VPNodeTest {
     public void testAdd() {
         final Integer testPoint = TEST_NODE_SIZE * 2;
 
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             assertFalse(testNode.contains(testPoint));
 
             testNode.add(testPoint);
@@ -53,7 +53,7 @@ public class VPNodeTest {
         final Integer pointNotInNode = TEST_NODE_SIZE * 2;
         final Integer pointInNode = TEST_NODE_SIZE / 2;
 
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             assertFalse(testNode.remove(pointNotInNode));
             assertTrue(testNode.remove(pointInNode));
 
@@ -72,7 +72,7 @@ public class VPNodeTest {
     public void testContains() {
         final Integer pointNotInNode = TEST_NODE_SIZE * 2;
 
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             for (int i = 0; i < TEST_NODE_SIZE; i++) {
                 assertTrue(testNode.contains(i));
             }
@@ -89,7 +89,7 @@ public class VPNodeTest {
             pointsToRetain.add(i);
         }
 
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             assertTrue(testNode.retainAll(pointsToRetain));
             assertEquals(pointsToRetain.size(), testNode.size());
 
@@ -106,7 +106,7 @@ public class VPNodeTest {
         final Integer queryPoint = TEST_NODE_SIZE / 2;
         final int numberOfNeighbors = 3;
 
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final NearestNeighborCollector<Integer> collector =
                     new NearestNeighborCollector<Integer>(queryPoint, new IntegerDistanceFunction(), numberOfNeighbors);
 
@@ -124,7 +124,7 @@ public class VPNodeTest {
         final Integer queryPoint = TEST_NODE_SIZE / 2;
         final int maxRange = TEST_NODE_SIZE / 8;
 
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final ArrayList<Integer> collectedPoints = new ArrayList<Integer>();
 
             testNode.collectAllWithinRange(queryPoint, maxRange, collectedPoints);
@@ -139,7 +139,7 @@ public class VPNodeTest {
 
     @Test
     public void testAddPointsToArray() {
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final Integer[] array = new Integer[TEST_NODE_SIZE];
             testNode.addPointsToArray(array, 0);
 
@@ -149,7 +149,7 @@ public class VPNodeTest {
 
     @Test
     public void testCollectIterators() {
-        for (final VPNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
+        for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final ArrayList<Iterator<Integer>> iterators = new ArrayList<Iterator<Integer>>();
             testNode.collectIterators(iterators);
 
@@ -166,22 +166,22 @@ public class VPNodeTest {
         }
     }
 
-    private Collection<VPNode<Integer>> createTestNodes(final int nodeSize) {
+    private Collection<VPTreeNode<Integer>> createTestNodes(final int nodeSize) {
         final ArrayList<Integer> points = new ArrayList<Integer>(nodeSize);
 
         for (int i = 0; i < nodeSize; i++) {
             points.add(i);
         }
 
-        final ArrayList<VPNode<Integer>> testNodes = new ArrayList<VPNode<Integer>>(3);
+        final ArrayList<VPTreeNode<Integer>> testNodes = new ArrayList<VPTreeNode<Integer>>(3);
 
-        testNodes.add(new VPNode<Integer>(points, new IntegerDistanceFunction(),
+        testNodes.add(new VPTreeNode<Integer>(points, new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size() * 2));
 
-        testNodes.add(new VPNode<Integer>(points, new IntegerDistanceFunction(),
+        testNodes.add(new VPTreeNode<Integer>(points, new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size()));
 
-        testNodes.add(new VPNode<Integer>(points, new IntegerDistanceFunction(),
+        testNodes.add(new VPTreeNode<Integer>(points, new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Integer>(), points.size() / 8));
 
         return testNodes;

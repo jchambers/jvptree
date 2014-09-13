@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-class VPNode<E> {
+class VPTreeNode<E> {
 
     private final int capacity;
     private final DistanceFunction<? super E> distanceFunction;
@@ -19,12 +19,12 @@ class VPNode<E> {
 
     private double threshold;
 
-    private VPNode<E> closer;
-    private VPNode<E> farther;
+    private VPTreeNode<E> closer;
+    private VPTreeNode<E> farther;
 
     public static final int DEFAULT_NODE_CAPACITY = 32;
 
-    public VPNode(final List<E> points, final DistanceFunction<? super E> distanceFunction,
+    public VPTreeNode(final List<E> points, final DistanceFunction<? super E> distanceFunction,
             final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int capacity) {
 
         if (capacity < 1) {
@@ -50,10 +50,10 @@ class VPNode<E> {
 
             try {
                 final int firstIndexPastThreshold =
-                        VPNode.partitionPoints(points, this.vantagePoint, this.threshold, this.distanceFunction);
+                        VPTreeNode.partitionPoints(points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                this.closer = new VPNode<E>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                this.farther = new VPNode<E>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                this.closer = new VPTreeNode<E>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                this.farther = new VPTreeNode<E>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
             } catch (PartitionException e) {
                 // We couldn't partition the list, so just store all of the points in this node
                 this.points = new ArrayList<E>(points);
@@ -84,10 +84,10 @@ class VPNode<E> {
                     this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.points, this.vantagePoint, this.distanceFunction);
 
                     final int firstIndexPastThreshold =
-                            VPNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
+                            VPTreeNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                    this.closer = new VPNode<E>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                    this.farther = new VPNode<E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.closer = new VPTreeNode<E>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.farther = new VPTreeNode<E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
 
                     this.points = null;
                 } catch (PartitionException e) {
@@ -100,7 +100,7 @@ class VPNode<E> {
     public boolean remove(final E point) {
         if (this.points == null) {
             // This is not a leaf node; try to remove the point from an appropriate child node
-            final VPNode<E> childNode = this.getChildNodeForPoint(point);
+            final VPTreeNode<E> childNode = this.getChildNodeForPoint(point);
             final boolean modified = childNode.remove(point);
 
             if (childNode.size() == 0) {
@@ -140,10 +140,10 @@ class VPNode<E> {
 
         try {
             final int firstIndexPastThreshold =
-                    VPNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
+                    VPTreeNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
 
-            this.closer = new VPNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-            this.farther = new VPNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            this.closer = new VPTreeNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            this.farther = new VPTreeNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
         } catch (PartitionException e) {
             this.closer = null;
             this.farther = null;
@@ -158,7 +158,7 @@ class VPNode<E> {
 
     public void collectNearestNeighbors(final NearestNeighborCollector<E> collector) {
         if (this.points == null) {
-            final VPNode<E> firstNodeSearched = this.getChildNodeForPoint(collector.getQueryPoint());
+            final VPTreeNode<E> firstNodeSearched = this.getChildNodeForPoint(collector.getQueryPoint());
             firstNodeSearched.collectNearestNeighbors(collector);
 
             final double distanceFromVantagePointToQueryPoint =
@@ -219,7 +219,7 @@ class VPNode<E> {
         }
     }
 
-    private VPNode<E> getChildNodeForPoint(final E point) {
+    private VPTreeNode<E> getChildNodeForPoint(final E point) {
         return this.distanceFunction.getDistance(this.vantagePoint, point) <= this.threshold ? this.closer : this.farther;
     }
 

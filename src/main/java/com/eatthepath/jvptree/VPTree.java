@@ -32,7 +32,7 @@ public class VPTree<E> implements SpatialIndex<E> {
     private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
     private final int nodeCapacity;
 
-    private VPNode<E> rootNode;
+    private VPTreeNode<E> rootNode;
 
     /**
      * Constructs a new vp-tree that uses the given distance function and is initially empty.
@@ -53,7 +53,7 @@ public class VPTree<E> implements SpatialIndex<E> {
     public VPTree(final DistanceFunction<? super E> distanceFunction, final Collection<E> points) {
         this(distanceFunction, new SamplingMedianDistanceThresholdSelectionStrategy<E>(
                 SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES),
-                VPNode.DEFAULT_NODE_CAPACITY, points);
+                VPTreeNode.DEFAULT_NODE_CAPACITY, points);
     }
 
     /**
@@ -72,7 +72,7 @@ public class VPTree<E> implements SpatialIndex<E> {
         this.nodeCapacity = nodeCapacity;
 
         if (points != null && !points.isEmpty()) {
-            this.rootNode = new VPNode<E>(
+            this.rootNode = new VPTreeNode<E>(
                     new ArrayList<E>(points),
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
@@ -202,7 +202,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      */
     public boolean add(final E point) {
         if (this.rootNode == null) {
-            this.rootNode = new VPNode<E>(
+            this.rootNode = new VPTreeNode<E>(
                     java.util.Collections.singletonList(point),
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
