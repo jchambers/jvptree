@@ -69,11 +69,7 @@ public class NearestNeighborCollectorTest {
         this.collector.offerPoint(5);
 
         final ArrayList<Integer> expectedList = new ArrayList<Integer>();
-        expectedList.add(1);
-        expectedList.add(2);
-        expectedList.add(3);
-        expectedList.add(4);
-        expectedList.add(5);
+        java.util.Collections.addAll(expectedList, 1, 2, 3, 4, 5);
 
         assertEquals(CAPACITY, expectedList.size());
         assertEquals(expectedList, this.collector.toSortedList());

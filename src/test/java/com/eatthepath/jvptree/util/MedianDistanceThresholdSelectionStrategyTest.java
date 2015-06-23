@@ -37,4 +37,9 @@ public class MedianDistanceThresholdSelectionStrategyTest {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testSelectThresholdEmptyList() {
+        new MedianDistanceThresholdSelectionStrategy<Integer>().selectThreshold(
+                new ArrayList<Integer>(), 0, new IntegerDistanceFunction());
+    }
 }

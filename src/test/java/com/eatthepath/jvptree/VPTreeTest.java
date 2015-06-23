@@ -36,7 +36,7 @@ public class VPTreeTest {
         final Integer queryPoint = TEST_TREE_SIZE / 2;
         final int maxDistance = TEST_TREE_SIZE / 8;
 
-        final List<Integer> pointsWithinRange = vpTree.getAllWithinRange(queryPoint, maxDistance);
+        final List<Integer> pointsWithinRange = vpTree.getAllWithinDistance(queryPoint, maxDistance);
 
         assertEquals((2 * maxDistance) + 1, pointsWithinRange.size());
 

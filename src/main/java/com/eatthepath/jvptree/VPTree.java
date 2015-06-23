@@ -105,7 +105,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getAllWithinRange(java.lang.Object, double)
      */
-    public List<E> getAllWithinRange(final E queryPoint, final double maxDistance) {
+    public List<E> getAllWithinDistance(final E queryPoint, final double maxDistance) {
         final List<E> pointsWithinRange;
 
         if (this.rootNode == null) {
