@@ -30,8 +30,6 @@ class VPTreeNode<E> {
     private VPTreeNode<E> closer;
     private VPTreeNode<E> farther;
 
-    public static final int DEFAULT_NODE_CAPACITY = 32;
-
     /**
      * Constructs a new node that contains the given collection of points. If the given collection of points is larger
      * than the given maximum capacity, the new node will attempts to partition the collection of points into child

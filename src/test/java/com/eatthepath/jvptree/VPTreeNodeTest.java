@@ -18,7 +18,7 @@ public class VPTreeNodeTest {
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeNoPoints() {
         new VPTreeNode<Integer>(new ArrayList<Integer>(), new IntegerDistanceFunction(),
-                new MedianDistanceThresholdSelectionStrategy<Integer>(), VPTreeNode.DEFAULT_NODE_CAPACITY);
+                new MedianDistanceThresholdSelectionStrategy<Integer>(), VPTree.DEFAULT_NODE_CAPACITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
