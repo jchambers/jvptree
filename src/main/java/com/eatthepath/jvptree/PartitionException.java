@@ -6,6 +6,6 @@ package com.eatthepath.jvptree;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-public class PartitionException extends Exception {
+class PartitionException extends Exception {
     private static final long serialVersionUID = 1L;
 }
