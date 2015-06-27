@@ -127,7 +127,7 @@ public class VPTreeNodeTest {
         for (final VPTreeNode<Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final ArrayList<Integer> collectedPoints = new ArrayList<Integer>();
 
-            testNode.collectAllWithinRange(queryPoint, maxRange, collectedPoints);
+            testNode.collectAllWithinDistance(queryPoint, maxRange, collectedPoints);
 
             assertEquals((2 * maxRange) + 1, collectedPoints.size());
 

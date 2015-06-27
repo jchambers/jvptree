@@ -7,6 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * A single node of a vantage-point tree. Nodes may either be leaf nodes that contain points directly or branch nodes
+ * that have a "closer than threshold" and "farther than threshold" child node.
+ *
+ * @author <a href="https://github.com/jchambers">Jon Chambers</a>
+ *
+ * @param <E>
+ */
 class VPTreeNode<E> {
 
     private final int capacity;
@@ -24,6 +32,18 @@ class VPTreeNode<E> {
 
     public static final int DEFAULT_NODE_CAPACITY = 32;
 
+    /**
+     * Constructs a new node that contains the given collection of points. If the given collection of points is larger
+     * than the given maximum capacity, the new node will attempts to partition the collection of points into child
+     * nodes using the given distance function and threshold selection strategy.
+     *
+     * @param points the collection of points to store in or below this node
+     * @param distanceFunction the distance function to use when partitioning points
+     * @param thresholdSelectionStrategy the threshold selection strategy to use when selecting points
+     * @param capacity the desired maximum capacity of this node; this node may contain more points than the given
+     * capacity if the given collection of points cannot be partitioned (for example, because all of the points are an
+     * equal distance away from the vantage point)
+     */
     public VPTreeNode(final List<E> points, final DistanceFunction<? super E> distanceFunction,
             final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int capacity) {
 
@@ -32,7 +52,7 @@ class VPTreeNode<E> {
         }
 
         if (points.isEmpty()) {
-            throw new IllegalArgumentException("Cannot create a VPNode with an empty list of points.");
+            throw new IllegalArgumentException("Cannot create a VPTreeNode with an empty list of points.");
         }
 
         this.capacity = capacity;
@@ -64,6 +84,11 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Returns the number of points stored in this node and its children.
+     *
+     * @return the number of points stored in this node and its children
+     */
     public int size() {
         if (this.points == null) {
             return this.closer.size() + this.farther.size();
@@ -72,6 +97,13 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Adds a point to this node or one of its children. If this node is a leaf node and the addition of the new point
+     * increases the size of the node beyond its desired capacity, the node will attempt to partition its points into
+     * two child nodes.
+     *
+     * @param point the point to add to this node
+     */
     public void add(final E point) {
         if (this.points == null) {
             // This is not a leaf node; pass this point on to the appropriate child
@@ -97,6 +129,13 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Removes a point from this node (if it is a leaf node) or one of its children. If the removal of the point would
+     * result in an empty node, the empty node's parent will absorb and re-partition all points from all child nodes.
+     *
+     * @param point the point to remove from this node or one of its children
+     * @return {@code true} if a points was removed or {@code false} otherwise
+     */
     public boolean remove(final E point) {
         if (this.points == null) {
             // This is not a leaf node; try to remove the point from an appropriate child node
@@ -113,6 +152,16 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Removes all from this node and its children that are not in the given collection of points. If the removal of a
+     * point would result in an empty node, the empty node's parent will absorb and re-partition all points from all
+     * child nodes.
+     *
+     * @param points the collection of points to retain
+     *
+     * @return {@code true} if any points were removed from this node or one of its children as a result of this
+     * operation or {@code false} otherwise
+     */
     public boolean retainAll(final Collection<?> points) {
         final boolean modified;
 
@@ -132,6 +181,9 @@ class VPTreeNode<E> {
         return modified;
     }
 
+    /**
+     * Gathers points from child nodes and re-partitions them into new child nodes.
+     */
     private void redistributePointsFromChildNodes() {
         final ArrayList<E> collectedPoints = new ArrayList<E>(this.size());
         this.addAllPointsToCollection(collectedPoints);
@@ -152,6 +204,13 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Tests whether this node or one of its children contains the given point.
+     *
+     * @param point the point to check
+     *
+     * @return {@code true} if this node or one of its children contains the given point or {@code false} otherwise
+     */
     public boolean contains(final E point) {
         return this.points == null ? this.getChildNodeForPoint(point).contains(point) : this.points.contains(point);
     }
@@ -197,18 +256,25 @@ class VPTreeNode<E> {
         }
     }
 
-    public void collectAllWithinRange(final E queryPoint, final double maxDistance, final Collection<E> collection) {
+    /**
+     * Gathers all points within a given maximum distance of the given query point into the given collection.
+     *
+     * @param queryPoint the point from which to measure distance to other points
+     * @param maxDistance the distance within which to collect points
+     * @param collection the collection to which points within the maximum distance should be added
+     */
+    public void collectAllWithinDistance(final E queryPoint, final double maxDistance, final Collection<E> collection) {
         if (this.points == null) {
             double distanceFromVantagePointToQueryPoint =
                     this.distanceFunction.getDistance(this.vantagePoint, queryPoint);
 
             // We want to search any of this node's children that intersect with the query region
             if (distanceFromVantagePointToQueryPoint <= this.threshold + maxDistance) {
-                this.closer.collectAllWithinRange(queryPoint, maxDistance, collection);
+                this.closer.collectAllWithinDistance(queryPoint, maxDistance, collection);
             }
 
             if (distanceFromVantagePointToQueryPoint + maxDistance > this.threshold) {
-                this.farther.collectAllWithinRange(queryPoint, maxDistance, collection);
+                this.farther.collectAllWithinDistance(queryPoint, maxDistance, collection);
             }
         } else {
             for (final E point : this.points) {
@@ -219,10 +285,25 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Returns the child node (either the closer node or farther node) that would contain the given point given its
+     * distance from this node's vantage point.
+     *
+     * @param point the point for which to choose an appropriate child node; the point need not actually exist within
+     * either child node
+     *
+     * @return this node's "closer" child node if the given point is within this node's distance threshold of the
+     * vantage point or the "farther" node otherwise
+     */
     private VPTreeNode<E> getChildNodeForPoint(final E point) {
         return this.distanceFunction.getDistance(this.vantagePoint, point) <= this.threshold ? this.closer : this.farther;
     }
 
+    /**
+     * Adds all points contained by this node and its children to the given collection.
+     *
+     * @param collection the collection to which points should be added.
+     */
     private void addAllPointsToCollection(final Collection<E> collection) {
         if (this.points == null) {
             this.closer.addAllPointsToCollection(collection);
@@ -232,6 +313,14 @@ class VPTreeNode<E> {
         }
     }
 
+    /**
+     * Adds all points contained by this node and its children to the given array.
+     *
+     * @param array the array to which points should be added
+     * @param offset the starting index at which to add points to the array
+     *
+     * @return the number of points added to the array
+     */
     public int addPointsToArray(final Object[] array, final int offset) {
         final int pointsAdded;
 
@@ -248,6 +337,12 @@ class VPTreeNode<E> {
         return pointsAdded;
     }
 
+    /**
+     * Recursively gathers iterators that span the points contained in this node and its children into the given
+     * collection.
+     *
+     * @param collection the collection to which iterators should be added
+     */
     public void collectIterators(final Collection<Iterator<E>> collection) {
         if (this.points == null) {
             this.closer.collectIterators(collection);
@@ -258,13 +353,17 @@ class VPTreeNode<E> {
     }
 
     /**
-     * 
-     * @param points
-     * @param vantagePoint
-     * @param threshold
-     * @param distanceFunction
+     * Partitions the points in the given list such that all points that fall within the given distance threshold of the
+     * given vantage point are on one "side" of the list and all points beyond the threshold are on the other.
+     *
+     * @param points the list of points to partition
+     * @param vantagePoint the point from which to measure distances
+     * @param threshold the distance threshold to be used for partitioning
+     * @param distanceFunction the function to use to calculate distances from the vantage point
      * @return the index of the first point in the list that falls beyond the distance threshold
-     * @throws PartitionException
+     *
+     * @throws PartitionException if the list of points could not be partitioned (i.e. because they are all the same
+     * distance from the vantage point).
      */
     private static <E> int partitionPoints(final List<E> points, final E vantagePoint, final double threshold, final DistanceFunction<? super E> distanceFunction) throws PartitionException {
         int i = 0;

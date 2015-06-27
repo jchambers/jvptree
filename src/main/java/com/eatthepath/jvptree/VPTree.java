@@ -8,20 +8,20 @@ import java.util.List;
 import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
 
 /**
- * <p>A vantage-point tree (or vp-tree) is a binary space-partitioned collection of points in a metric space. The main
+ * <p>A vantage-point tree (or vp-tree) is a binary space partitioning collection of points in a metric space. The main
  * feature of vantage point trees is that they allow for k-nearest-neighbor searches in any metric space in
  * <em>O(log(n))</em> time.</p>
- * 
+ *
  * <p>Vantage point trees recursively partition points by choosing a &quot;vantage point&quot; and a distance threshold;
  * points are then partitioned into one collection that contains all of the points closer to the vantage point than the
  * chosen threshold and one collection that contains all of the points farther away than the chosen threshold.</p>
- * 
+ *
  * <p>A {@linkplain DistanceFunction distance function} that satisfies the properties of a metric space must be provided
  * when constructing a vantage point tree. Callers may also specify a threshold selection strategy (a sampling median
  * strategy is used by default) and a node size to tune the ratio of nodes searched to points inspected per node.
  * Vantage point trees may be constructed with or without an initial collection of points, though specifying a
  * collection of points at construction time is the most efficient approach.</p>
- * 
+ *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  *
  * @param <E>
@@ -36,7 +36,7 @@ public class VPTree<E> implements SpatialIndex<E> {
 
     /**
      * Constructs a new vp-tree that uses the given distance function and is initially empty.
-     * 
+     *
      * @param distanceFunction the distance function to use to calculate the distance between points
      */
     public VPTree(final DistanceFunction<? super E> distanceFunction) {
@@ -46,7 +46,7 @@ public class VPTree<E> implements SpatialIndex<E> {
     /**
      * Constructs a new vp-tree that uses the given distance function and is initially populated with the given
      * collection of points.
-     * 
+     *
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
@@ -60,7 +60,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * Constructs a new vp-tree that uses the given distance function and threshold selection strategy to partition
      * points. The tree will attempt to partition nodes that contain more than {@code nodeCapacity} points, and will
      * be initially populated with the given collection of points.
-     * 
+     *
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
@@ -112,7 +112,7 @@ public class VPTree<E> implements SpatialIndex<E> {
             pointsWithinRange = null;
         } else {
             pointsWithinRange = new ArrayList<E>();
-            this.rootNode.collectAllWithinRange(queryPoint, maxDistance, pointsWithinRange);
+            this.rootNode.collectAllWithinDistance(queryPoint, maxDistance, pointsWithinRange);
         }
 
         return pointsWithinRange;
