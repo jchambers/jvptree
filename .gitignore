@@ -16,3 +16,9 @@ hs_err_pid*
 .classpath
 .project
 .settings/
+
+# Generated output
+doc/
+
+# OS detritus
+.DS_Store
