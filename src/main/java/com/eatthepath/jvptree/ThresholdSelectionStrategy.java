@@ -13,6 +13,7 @@ import java.util.List;
  * @param <T>
  */
 public interface ThresholdSelectionStrategy<T> {
+
     /**
      * Chooses a partitioning distance threshold appropriate for the given list of points. Implementations are allowed to
      * reorder the list of points, but must not add or remove points from the list.
@@ -24,5 +25,5 @@ public interface ThresholdSelectionStrategy<T> {
      * @return a partitioning threshold distance appropriate for the given list of points; ideally, some points should
      * be closer to the origin than the returned threshold, and some should be farther
      */
-    double selectThreshold(List<T> points, T origin, DistanceFunction<? super T> distanceFunction);
+    <R extends T> double selectThreshold(List<R> points, R origin, DistanceFunction<? super R> distanceFunction);
 }

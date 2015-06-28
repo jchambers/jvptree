@@ -27,7 +27,7 @@ public class MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSel
      *
      * @throws IllegalArgumentException if the given list of points is empty
      */
-    public double selectThreshold(final List<T> points, final T origin, final DistanceFunction<? super T> distanceFunction) {
+    public <R extends T> double selectThreshold(final List<R> points, final R origin, final DistanceFunction<? super R> distanceFunction) {
         if (points.isEmpty()) {
             throw new IllegalArgumentException("Point list must not be empty.");
         }

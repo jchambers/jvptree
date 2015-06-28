@@ -19,7 +19,7 @@ class VPTreeNode<E> {
 
     private final int capacity;
     private final DistanceFunction<? super E> distanceFunction;
-    private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
+    private final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy;
 
     private ArrayList<E> points;
 
@@ -43,7 +43,7 @@ class VPTreeNode<E> {
      * equal distance away from the vantage point)
      */
     public VPTreeNode(final List<E> points, final DistanceFunction<? super E> distanceFunction,
-            final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int capacity) {
+            final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final int capacity) {
 
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");

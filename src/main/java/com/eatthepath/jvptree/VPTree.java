@@ -29,7 +29,7 @@ import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrat
 public class VPTree<E> implements SpatialIndex<E> {
 
     private final DistanceFunction<? super E> distanceFunction;
-    private final ThresholdSelectionStrategy<E> thresholdSelectionStrategy;
+    private final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy;
     private final int nodeCapacity;
 
     private VPTreeNode<E> rootNode;
@@ -70,7 +70,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy) {
         this(distanceFunction, thresholdSelectionStrategy, VPTree.DEFAULT_NODE_CAPACITY, null);
     }
 
@@ -83,7 +83,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final Collection<E> points) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final Collection<E> points) {
         this(distanceFunction, thresholdSelectionStrategy, VPTree.DEFAULT_NODE_CAPACITY, points);
     }
 
@@ -96,7 +96,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final int nodeCapacity) {
         this(distanceFunction, thresholdSelectionStrategy, nodeCapacity, null);
     }
 
@@ -110,7 +110,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
+    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
         this.nodeCapacity = nodeCapacity;
