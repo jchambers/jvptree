@@ -1,6 +1,8 @@
-package com.eatthepath.jvptree;
+package com.eatthepath.jvptree.util;
 
 import java.util.Comparator;
+
+import com.eatthepath.jvptree.DistanceFunction;
 
 /**
  * A {@code Comparator} that orders points by their distance (as determined by a given distance function) from a given
