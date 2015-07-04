@@ -2,7 +2,7 @@
 
 # jvptree
 
-Jvptree is a generic [vantage-point tree](https://en.wikipedia.org/wiki/Vantage-point_tree) implementation written in Java that allow for quick (*O(log(n))*) searches for the nearest neighbors to a given point. Vantage-point trees are binary space partitioning trees that partition points according to their distance from each node's "vantage point." Points that are closer than a chosen threshold go into one child node, while points that are farther away go into the other. Vantage point trees operate on any [metric space](https://en.wikipedia.org/wiki/Metric_space).
+Jvptree is a generic [vantage-point tree](https://en.wikipedia.org/wiki/Vantage-point_tree) implementation written in Java that allows for quick (*O(log(n))*) searches for the nearest neighbors to a given point. Vantage-point trees are binary space partitioning trees that partition points according to their distance from each node's "vantage point." Points that are closer than a chosen threshold go into one child node, while points that are farther away go into the other. Vantage point trees operate on any [metric space](https://en.wikipedia.org/wiki/Metric_space).
 
 Steve Hanov has written a great and accessible [introducton to vp-trees](http://stevehanov.ca/blog/index.php?id=130).
 
