@@ -21,8 +21,6 @@ import java.util.List;
  * collection of points at construction time is the most efficient approach.</p>
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <E>
  */
 public class VPTree<E> implements SpatialIndex<E> {
 

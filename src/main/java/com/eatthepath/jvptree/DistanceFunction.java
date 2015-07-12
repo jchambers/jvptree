@@ -12,8 +12,6 @@ package com.eatthepath.jvptree;
  * </ol>
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <T>
  */
 public interface DistanceFunction<T> {
 

@@ -7,8 +7,6 @@ import java.util.Random;
  * A threshold distance selection strategy that uses the median distance from the origin as the threshold.
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <T>
  */
 public class MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSelectionStrategy<T> {
 

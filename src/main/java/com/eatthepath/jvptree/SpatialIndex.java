@@ -7,8 +7,6 @@ import java.util.List;
  * A collection of points that can be searched efficiently to find points near a given query point.
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <E>
  */
 public interface SpatialIndex<E> extends Collection<E> {
     /**

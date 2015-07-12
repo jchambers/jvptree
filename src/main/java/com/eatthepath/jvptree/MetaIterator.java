@@ -8,10 +8,8 @@ import java.util.NoSuchElementException;
 
 /**
  * An iterator that concatenates a number of sub-iterators.
- * 
- * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  *
- * @param <E>
+ * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
 class MetaIterator<E> implements Iterator<E> {
 
@@ -19,7 +17,7 @@ class MetaIterator<E> implements Iterator<E> {
 
     /**
      * Constructs an iterator that concatenates the contents of the given collection of iterators.
-     * 
+     *
      * @param iterators the iterators to concatenate
      */
     public MetaIterator(final Collection<Iterator<E>> iterators) {

@@ -8,8 +8,6 @@ import java.util.List;
  * of points as the threshold.
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <T>
  */
 public class SamplingMedianDistanceThresholdSelectionStrategy<T> extends MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSelectionStrategy<T> {
 

@@ -12,8 +12,6 @@ import java.util.Random;
  * that have a "closer than threshold" and "farther than threshold" child node.
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <E>
  */
 class VPTreeNode<E> {
 

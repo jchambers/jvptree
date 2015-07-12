@@ -9,8 +9,6 @@ import java.util.List;
  * {@code ThresholdSelectionStrategy} chooses the distance that will be used by a vp-tree node to partition its points.
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
- *
- * @param <T>
  */
 public interface ThresholdSelectionStrategy<T> {
 
