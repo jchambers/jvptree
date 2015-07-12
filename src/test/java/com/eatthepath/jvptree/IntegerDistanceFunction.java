@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree.util;
+package com.eatthepath.jvptree;
 
 import com.eatthepath.jvptree.DistanceFunction;
 

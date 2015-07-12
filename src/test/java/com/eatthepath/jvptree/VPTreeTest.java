@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.eatthepath.jvptree.util.IntegerDistanceFunction;
-
 public class VPTreeTest {
 
     private static final int TEST_TREE_SIZE = 256;

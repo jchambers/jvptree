@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import com.eatthepath.jvptree.util.DistanceComparator;
-
 /**
  * A utility class that uses a priority queue to efficiently collect results for a k-nearest-neighbors query in a
  * vp-tree.

@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
-
 /**
  * <p>A vantage-point tree (or vp-tree) is a binary space partitioning collection of points in a metric space. The main
  * feature of vantage point trees is that they allow for k-nearest-neighbor searches in any metric space in
