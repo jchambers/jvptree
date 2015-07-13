@@ -26,7 +26,7 @@ The main thing vantage-point trees do is partitioning points into groups that ar
 
 ### Distance functions
 
-You must always specify a distance function when creating a vp-tree. Distance functions take two points as arguments and must satisfy the requirements of a metric space, namely:
+You must always specify a [distance function](http://jchambers.github.io/jvptree/apidocs/0.1/com/eatthepath/jvptree/DistanceFunction.html) when creating a vp-tree. Distance functions take two points as arguments and must satisfy the requirements of a metric space, namely:
 
 - d(x, y) >= 0
 - d(x, y) = 0 if and only if x == y
@@ -35,7 +35,7 @@ You must always specify a distance function when creating a vp-tree. Distance fu
 
 ### Threshold selection strategies
 
-You may optionally specify a strategy for choosing a distance threshold for partitioning. By default, jvptree will use sampling median strategy, where it will take the median distance from a small subset of the points to partition. Jvptree also includes a threshold selection strategy that takes the median of *all* points to be partitioned; this is slower, but may result in a more balanced tree. Most users will not need to specify a threshold selection strategy.
+You may optionally specify a [strategy for choosing a distance threshold](http://jchambers.github.io/jvptree/apidocs/0.1/com/eatthepath/jvptree/ThresholdSelectionStrategy.html) for partitioning. By default, jvptree will use [sampling median strategy](http://jchambers.github.io/jvptree/apidocs/0.1/com/eatthepath/jvptree/util/SamplingMedianDistanceThresholdSelectionStrategy.html), where it will take the median distance from a small subset of the points to partition. Jvptree also includes a [threshold selection strategy that takes the median of *all* points](http://jchambers.github.io/jvptree/apidocs/0.1/com/eatthepath/jvptree/util/MedianDistanceThresholdSelectionStrategy.html) to be partitioned; this is slower, but may result in a more balanced tree. Most users will not need to specify a threshold selection strategy.
 
 ### Node capacity
 
