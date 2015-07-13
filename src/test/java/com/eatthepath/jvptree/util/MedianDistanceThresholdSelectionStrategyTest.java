@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.eatthepath.jvptree.util;
 
 import static org.junit.Assert.*;
 
@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.eatthepath.jvptree.MedianDistanceThresholdSelectionStrategy;
+import com.eatthepath.jvptree.IntegerDistanceFunction;
+import com.eatthepath.jvptree.util.MedianDistanceThresholdSelectionStrategy;
 
 public class MedianDistanceThresholdSelectionStrategyTest {
 

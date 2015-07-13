@@ -1,7 +1,10 @@
-package com.eatthepath.jvptree;
+package com.eatthepath.jvptree.util;
 
 import java.util.List;
 import java.util.Random;
+
+import com.eatthepath.jvptree.DistanceFunction;
+import com.eatthepath.jvptree.ThresholdSelectionStrategy;
 
 /**
  * A threshold distance selection strategy that uses the median distance from the origin as the threshold.

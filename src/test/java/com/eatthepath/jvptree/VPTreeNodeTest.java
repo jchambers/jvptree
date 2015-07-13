@@ -8,6 +8,8 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import com.eatthepath.jvptree.util.MedianDistanceThresholdSelectionStrategy;
+
 public class VPTreeNodeTest {
 
     private static final int TEST_NODE_SIZE = 32;
