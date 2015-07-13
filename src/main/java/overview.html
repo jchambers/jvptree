@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Jvptree overview</title>
+    </head>
+
+    <body>
+        <h1 id="jvptree">jvptree</h1>
+
+        <p>Jvptree is a generic <a href="https://en.wikipedia.org/wiki/Vantage-point_tree">vantage-point tree</a> implementation written in Java that allows for quick (<em>O(log(n))</em>) searches for the nearest neighbors to a given point. Vantage-point trees are binary space partitioning trees that partition points according to their distance from each node's "vantage point." Points that are closer than a chosen threshold go into one child node, while points that are farther away go into the other. Vantage point trees operate on any <a href="https://en.wikipedia.org/wiki/Metric_space">metric space</a>.</p>
+
+        <p>Steve Hanov has written a great and accessible <a href="http://stevehanov.ca/blog/index.php?id=130">introducton to vp-trees</a>.</p>
+
+        <h2 id="major-concepts">Major concepts</h2>
+
+        <p>The main thing vantage-point trees do is partitioning points into groups that are closer or farther than a given distance threshold. To do that, a vp-tree needs to be able to figure out how far apart any two points are and also decide what to use as a distance threshold. At a minimum, you'll need to provide a distance function that can calculate the distance between points. You may optionally specify a threshold selection strategy; if you don't, a reasonable default will be used.</p>
+
+        <h3 id="distance-functions">Distance functions</h3>
+
+        <p>You must always specify a distance function when creating a vp-tree. Distance functions take two points as arguments and must satisfy the requirements of a metric space, namely:</p>
+
+        <ul>
+            <li>d(x, y) &gt;= 0</li>
+            <li>d(x, y) = 0 if and only if x == y</li>
+            <li>d(x, y) == d(y, x)</li>
+            <li>d(x, z) &lt;= d(x, y) + d(y, z)</li>
+        </ul>
+
+        <h3 id="threshold-selection-strategies">Threshold selection strategies</h3>
+
+        <p>You may optionally specify a strategy for choosing a distance threshold for partitioning. By default, jvptree will use sampling median strategy, where it will take the median distance from a small subset of the points to partition. Jvptree also includes a threshold selection strategy that takes the median of <em>all</em> points to be partitioned; this is slower, but may result in a more balanced tree. Most users will not need to specify a threshold selection strategy.</p>
+
+        <h3 id="node-capacity">Node capacity</h3>
+
+        <p>Additionally, you may specify a desired capacity for the tree's leaf nodes. It's worth mentioning early that you almost certainly do not need to worry about this; a reasonable default (32 points) will be used, and most users won't realize significant performance gains by tuning it.</p>
+
+        <p>Still, for those in need, you may choose a desired capacity for leaf nodes in a vp-tree. At one extreme, leaf nodes may contain only a single point. This means that searches will have to traverse more nodes, but once a leaf node is reached, fewer points will need to be searched to find nearest neighbors.</p>
+
+        <p>Using a larger node capacity will result in a "flatter" tree, and fewer nodes will need to be traversed when searching, but more nodes will need to be tested once a search reaches a leaf node. Larger node capacities also lead to less memory overhead because there are fewer nodes in the tree.</p>
+
+        <p>As a general rule of thumb, node capacities should be on the same order of magnitude as your typical search result size. The idea is that if a search reaches a leaf node, most of the points in the node will wind up in the collection of nearest neighbors (i.e. they all would have had to been checked anyhow) and few other nodes will have to be visited to gather any remaining neighbors.</p>
+
+        <h2 id="license">License</h2>
+
+        <p>Jvptree is available to the public under the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p>
+    </body>
+</html>
