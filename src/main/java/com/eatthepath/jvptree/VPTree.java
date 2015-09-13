@@ -191,6 +191,18 @@ public class VPTree<E> implements SpatialIndex<E> {
 
     /*
      * (non-Javadoc)
+     * @see java.util.Collection#containsAll(java.util.Collection)
+     */
+    public boolean containsAll(final Collection<?> points) {
+        for (final Object point : points) {
+            if (!this.contains(point)) { return false; }
+        }
+
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
      * @see java.util.Collection#iterator()
      */
     public Iterator<E> iterator() {
@@ -259,31 +271,6 @@ public class VPTree<E> implements SpatialIndex<E> {
 
     /*
      * (non-Javadoc)
-     * @see java.util.Collection#remove(java.lang.Object)
-     */
-    @SuppressWarnings("unchecked")
-    public boolean remove(final Object point) {
-        try {
-            return this.rootNode == null ? false : this.rootNode.remove((E) point);
-        } catch (ClassCastException e) {
-            return false;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see java.util.Collection#containsAll(java.util.Collection)
-     */
-    public boolean containsAll(final Collection<?> points) {
-        for (final Object point : points) {
-            if (!this.contains(point)) { return false; }
-        }
-
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
      * @see java.util.Collection#addAll(java.util.Collection)
      */
     public boolean addAll(final Collection<? extends E> points) {
@@ -293,6 +280,19 @@ public class VPTree<E> implements SpatialIndex<E> {
 
         // Adding points always modifies a VPTree
         return !points.isEmpty();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.util.Collection#remove(java.lang.Object)
+     */
+    @SuppressWarnings("unchecked")
+    public boolean remove(final Object point) {
+        try {
+            return this.rootNode == null ? false : this.rootNode.remove((E) point);
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
     /*
