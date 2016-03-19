@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.eatthepath</groupId>
   <artifactId>jvptree</artifactId>
-  <version>0.1</version>
+  <version>0.2-SNAPSHOT</version>
   <name>jvptree</name>
   <description>A generic vp-tree implementation in Java</description>
   <parent>
