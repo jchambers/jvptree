@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.eatthepath</groupId>
   <artifactId>jvptree</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>jvptree</name>
   <description>A generic vp-tree implementation in Java</description>
   <parent>
@@ -104,7 +104,7 @@
     <developer>
       <id>jon</id>
       <name>Jon Chambers</name>
-      <email>jon@relayrides.com</email>
+      <email>jon.chambers@gmail.com</email>
       <url>https://github.com/jchambers</url>
       <roles>
         <role>developer</role>
