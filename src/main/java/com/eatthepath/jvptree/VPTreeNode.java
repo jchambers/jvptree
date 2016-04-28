@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+
 /**
  * A single node of a vantage-point tree. Nodes may either be leaf nodes that contain points directly or branch nodes
  * that have a "closer than threshold" and "farther than threshold" child node.
@@ -387,4 +388,19 @@ class VPTreeNode<E> {
             throw new PartitionException();
         }
     }
+    public VPTreeNode<E> getCloser() {
+		return closer;
+	}
+
+	public VPTreeNode<E> getFarther() {
+		return farther;
+	}
+
+	public ArrayList<E> getPoints() {
+		return points;
+	}
+	
+	public E getVantagePoint() {
+		return vantagePoint;
+	}
 }
