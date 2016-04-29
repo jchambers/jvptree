@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
 
+
 /**
  * <p>A vantage-point tree (or vp-tree) is a binary space partitioning collection of points in a metric space. The main
  * feature of vantage point trees is that they allow for k-nearest-neighbor searches in any metric space in
@@ -121,7 +122,56 @@ public class VPTree<E> implements SpatialIndex<E> {
                     this.nodeCapacity);
         }
     }
+    /**
+     * Calculate the height of vp-tree.
+     * 
+     * @param root point of vp-tree
+     * @return height of vp-tree
+     */
+    public int height(VPTreeNode<E> root) {
+		if (root == null)
+			return 0;
+		else {
+			// compute height of each subtree
+			int lheight = height(root.getCloser());
+			int rheight = height(root.getFarther());
 
+			// use the larger one 
+			if (lheight > rheight)
+				return (lheight + 1);
+			else
+				return (rheight + 1);
+		}
+	}
+    
+	/**
+	 * Print nodes at the given level.
+	 * 
+	 * @param root point of vp-tree
+	 * @param level
+	 * @param levelOrderString
+	 */
+	public void printGivenLevel(VPTreeNode<E> root, int level,StringBuilder levelOrderString) {
+		if (root == null)
+			return;
+		if (level == 1) {
+			levelOrderString.append("vantage Point: " + root.getVantagePoint().toString()+"\n");
+			ArrayList<E> points = root.getPoints();
+			String separator = "";
+			if (points != null) {
+				levelOrderString.append("number of points: " + points.size()+"\n");
+				levelOrderString.append("(");
+				for (E point : points) {
+					levelOrderString.append(separator + point.toString());
+					separator = ",";
+				}
+				levelOrderString.append(")\n\n");
+			}
+		} else if (level > 1) {
+			printGivenLevel(root.getCloser(), level - 1,levelOrderString);
+			printGivenLevel(root.getFarther(), level - 1,levelOrderString);
+		}
+	}
     /*
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getNearestNeighbors(java.lang.Object, int)
@@ -317,6 +367,22 @@ public class VPTree<E> implements SpatialIndex<E> {
         return this.rootNode == null ? false : this.rootNode.retainAll(points);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString(){
+    	StringBuilder levelOrderString = new StringBuilder();
+		int h = height(this.rootNode);
+		int i;
+		for (i = 1; i <= h; i++) {
+			levelOrderString.append("-------------\n");
+			levelOrderString.append("Level: " + i + "\n");
+			levelOrderString.append("-------------\n");
+			printGivenLevel(this.rootNode, i,levelOrderString);
+		}
+		return levelOrderString.toString();
+    	
+    }
     /*
      * (non-Javadoc)
      * @see java.util.Collection#clear()
@@ -324,4 +390,8 @@ public class VPTree<E> implements SpatialIndex<E> {
     public void clear() {
         this.rootNode = null;
     }
+
+    public VPTreeNode<E> getRootNode() {
+		return rootNode;
+	}
 }

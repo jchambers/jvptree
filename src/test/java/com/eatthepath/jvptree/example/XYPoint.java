@@ -17,4 +17,9 @@ public class XYPoint {
     public double getY() {
         return this.y;
     }
+    
+    public String toString(){
+		return "("+this.x+","+this.y+")";
+    	
+    }
 }
