@@ -123,10 +123,10 @@ public class VPTree<E> implements SpatialIndex<E> {
         }
     }
     /**
-     * Calculate the height of VP Tree.
+     * Calculate the height of vp-tree.
      * 
-     * @param root point of VP Tree
-     * @return height of VP Tree
+     * @param root point of vp-tree
+     * @return height of vp-tree
      */
     public int height(VPTreeNode<E> root) {
 		if (root == null)
@@ -147,7 +147,7 @@ public class VPTree<E> implements SpatialIndex<E> {
 	/**
 	 * Print nodes at the given level.
 	 * 
-	 * @param root point of VP Tree
+	 * @param root point of vp-tree
 	 * @param level
 	 * @param levelOrderString
 	 */
@@ -155,11 +155,11 @@ public class VPTree<E> implements SpatialIndex<E> {
 		if (root == null)
 			return;
 		if (level == 1) {
-			levelOrderString.append("VP: " + root.getVantagePoint().toString()+"\n");
+			levelOrderString.append("vantage Point: " + root.getVantagePoint().toString()+"\n");
 			ArrayList<E> points = root.getPoints();
 			String separator = "";
 			if (points != null) {
-				levelOrderString.append("Size: " + points.size()+"\n");
+				levelOrderString.append("number of points: " + points.size()+"\n");
 				levelOrderString.append("(");
 				for (E point : points) {
 					levelOrderString.append(separator + point.toString());
@@ -367,6 +367,9 @@ public class VPTree<E> implements SpatialIndex<E> {
         return this.rootNode == null ? false : this.rootNode.retainAll(points);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     public String toString(){
     	StringBuilder levelOrderString = new StringBuilder();
 		int h = height(this.rootNode);
