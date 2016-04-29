@@ -14,7 +14,7 @@ import java.util.Random;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-class VPTreeNode<E> {
+public class VPTreeNode<E> {
 
     private final int capacity;
     private final DistanceFunction<? super E> distanceFunction;
