@@ -40,7 +40,7 @@ class VPTreeNode<P, E extends P> {
      * capacity if the given collection of points cannot be partitioned (for example, because all of the points are an
      * equal distance away from the vantage point)
      */
-    public VPTreeNode(final List<E> points, final DistanceFunction<P> distanceFunction,
+    public VPTreeNode(final Collection<E> points, final DistanceFunction<P> distanceFunction,
             final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy, final int capacity) {
 
         if (capacity < 1) {
@@ -54,29 +54,53 @@ class VPTreeNode<P, E extends P> {
         this.capacity = capacity;
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
+        this.points = new ArrayList<>(points);
 
         // All nodes must have a vantage point; choose one at random from the available points
-        this.vantagePoint = points.get(new Random().nextInt(points.size()));
+        this.vantagePoint = this.points.get(new Random().nextInt(points.size()));
 
-        if (points.size() > this.capacity) {
-            // Partially sort the list such that all points closer than or equal to the threshold distance from the
-            // vantage point come before the threshold point in the list and all points farther away come after the
-            // threshold point.
-            this.threshold = this.thresholdSelectionStrategy.selectThreshold(points, this.vantagePoint, this.distanceFunction);
+        this.anneal();
+    }
 
-            try {
-                final int firstIndexPastThreshold =
-                        VPTreeNode.partitionPoints(points, this.vantagePoint, this.threshold, this.distanceFunction);
+    protected void anneal() {
+        if (this.points == null) {
+            final int closerSize = this.closer.size();
+            final int fartherSize = this.farther.size();
 
-                this.closer = new VPTreeNode<>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                this.farther = new VPTreeNode<>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-            } catch (final PartitionException e) {
-                // We couldn't partition the list, so just store all of the points in this node
-                this.points = new ArrayList<>(points);
+            if (closerSize == 0 || fartherSize == 0) {
+                // One of the child nodes has become empty, and needs to be pruned.
+                this.points = new ArrayList<>(closerSize + fartherSize);
+                this.addAllPointsToCollection(this.points);
+
+                this.closer = null;
+                this.farther = null;
+
+                this.anneal();
+            } else {
+                this.closer.anneal();
+                this.farther.anneal();
             }
         } else {
-            // No need to partition; just store everything in this node
-            this.points = new ArrayList<>(points);
+            if (this.points.size() > this.capacity) {
+                // Partially sort the list such that all points closer than or equal to the threshold distance from the
+                // vantage point come before the threshold point in the list and all points farther away come after the
+                // threshold point.
+                this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.points, this.vantagePoint, this.distanceFunction);
+
+                try {
+                    final int firstIndexPastThreshold =
+                            VPTreeNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
+
+                    this.closer = new VPTreeNode<>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.farther = new VPTreeNode<>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+
+                    this.points = null;
+                } catch (final PartitionException e) {
+                    // We couldn't partition the list, so just store all of the points in this node
+                    this.closer = null;
+                    this.farther = null;
+                }
+            }
         }
     }
 
@@ -106,22 +130,6 @@ class VPTreeNode<P, E extends P> {
             this.getChildNodeForPoint(point).add(point);
         } else {
             this.points.add(point);
-
-            if (this.points.size() > this.capacity) {
-                try {
-                    this.threshold = this.thresholdSelectionStrategy.selectThreshold(this.points, this.vantagePoint, this.distanceFunction);
-
-                    final int firstIndexPastThreshold =
-                            VPTreeNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
-
-                    this.closer = new VPTreeNode<>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                    this.farther = new VPTreeNode<>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-
-                    this.points = null;
-                } catch (final PartitionException e) {
-                    // We couldn't partition the list in any useful way; just keep all of the points here
-                }
-            }
         }
     }
 
@@ -133,19 +141,16 @@ class VPTreeNode<P, E extends P> {
      * @return {@code true} if a points was removed or {@code false} otherwise
      */
     public boolean remove(final E point) {
+        final boolean modified;
+
         if (this.points == null) {
             // This is not a leaf node; try to remove the point from an appropriate child node
-            final VPTreeNode<P, E> childNode = this.getChildNodeForPoint(point);
-            final boolean modified = childNode.remove(point);
-
-            if (childNode.size() == 0) {
-                this.redistributePointsFromChildNodes();
-            }
-
-            return modified;
+            modified = this.getChildNodeForPoint(point).remove(point);
         } else {
-            return this.points.remove(point);
+            modified = this.points.remove(point);
         }
+
+        return modified;
     }
 
     /**
@@ -166,38 +171,11 @@ class VPTreeNode<P, E extends P> {
             final boolean modifiedFarther = this.farther.retainAll(points);
 
             modified = modifiedCloser || modifiedFarther;
-
-            if ((this.closer.size() == 0 || this.farther.size() == 0) && this.size() > 0) {
-                this.redistributePointsFromChildNodes();
-            }
         } else {
             modified = this.points.retainAll(points);
         }
 
         return modified;
-    }
-
-    /**
-     * Gathers points from child nodes and re-partitions them into new child nodes.
-     */
-    private void redistributePointsFromChildNodes() {
-        final ArrayList<E> collectedPoints = new ArrayList<>(this.size());
-        this.addAllPointsToCollection(collectedPoints);
-
-        this.threshold = this.thresholdSelectionStrategy.selectThreshold(collectedPoints, this.vantagePoint, this.distanceFunction);
-
-        try {
-            final int firstIndexPastThreshold =
-                    VPTreeNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
-
-            this.closer = new VPTreeNode<>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-            this.farther = new VPTreeNode<>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-        } catch (final PartitionException e) {
-            this.closer = null;
-            this.farther = null;
-
-            this.points = collectedPoints;
-        }
     }
 
     /**
