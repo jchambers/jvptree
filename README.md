@@ -49,35 +49,21 @@ As a general rule of thumb, node capacities should be on the same order of magni
 
 ## Using jvptree
 
-As discussed above, you must provide a distance function when creating a vp-tree and may optionally specify a distance threshold selection strategy and leaf node capacity. As a simple example, let's say you have a bunch of points on a two-dimensional grid, and those points are represented by the `XYPoint` class:
+As discussed above, you must provide a distance function when creating a vp-tree and may optionally specify a distance threshold selection strategy and leaf node capacity. As a simple example, let's say you're writing a version of [Space Invaders](https://en.wikipedia.org/wiki/Space_Invaders), and you know you'll need to find the closest enemies to the player's position. To start, everything on the playing field will exist at a specific point:
 
 ```java
-public class XYPoint {
-
-    private final double x;
-    private final double y;
-
-    public XYPoint(final double x, final double y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
+public interface CartesianPoint {
+    double getX();
+    double getY();
 }
 ```
 
-You must provide a distance function that will return the distance between any two given points. For example, you might create an `XYDistanceFunction` class:
+To create a vp-tree, you must provide a distance function that will return the distance between any two given points. In this example, you might create a `CartesianDistanceFunction` class:
 
 ```java
-public class XYDistanceFunction implements DistanceFunction<XYPoint> {
+public class CartesianDistanceFunction implements DistanceFunction<CartesianPoint> {
 
-    public double getDistance(XYPoint firstPoint, XYPoint secondPoint) {
+    public double getDistance(final CartesianPoint firstPoint, final CartesianPoint secondPoint) {
         final double deltaX = firstPoint.getX() - secondPoint.getX();
         final double deltaY = firstPoint.getY() - secondPoint.getY();
 
@@ -86,26 +72,30 @@ public class XYDistanceFunction implements DistanceFunction<XYPoint> {
 }
 ```
 
-Once you have your distance function, you can create a vp-tree that contains your collection of points:
+Once you have your distance function, you can create a vp-tree that stores the locations of all of the space invaders on the playing field:
 
 ```java
-VPTree<XYPoint> vpTree = new VPTree<XYPoint>(new XYDistanceFunction(), points);
+final VPTree<CartesianPoint, SpaceInvader> vpTree =
+        new VPTree<CartesianPoint, SpaceInvader>(
+                new CartesianDistanceFunction(), enemies);
 ```
 
 In this case, we provide all of our points at construction time, but you may also create an empty tree and add points later. The `VPTree` class implements Java's [`Collection`](http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html) interface and supports all optional operations.
 
-With your tree created, you can find the nearest neighbor to a query point. For example, to find the ten closest points to the point (17.4, -22.2), you could:
+Note that a `VPTree` has two generic types: a general "base" point type and a more specific type for the elements actually stored in the tree. You can query the tree using any instance of the base type, but still know that you'll be receiving a list of the more specific type as a result of the query. In our example, this is helpful because the player's location is a cartesian point, but the player is not a space invader. It wouldn't make much sense to create a new space invader at the player's location just to query the vp-tree, and so this construct allows us to query the tree with the player's location instead.
+
+With your tree created, you can find the closest enemies to the player's position. For example, to find (up to) the ten closest space invaders:
 
 ```java
-final List<XYPoint> nearestNeighbors =
-    vpTree.getNearestNeighbors(new XYPoint(17.4, -22.2), 10);
+final List<SpaceInvader> nearestEnemies =
+        vpTree.getNearestNeighbors(playerPosition, 10);
 ```
 
-You can also find all of the points that are within a given distance to a query point. For example, to find all points that are within a distance of 4.5 of the origin:
+You could also find all of the enemies that are within firing range of the player:
 
 ```java
-final List<XYPoint> pointsNearOrigin =
-    vpTree.getAllWithinDistance(new XYPoint(0, 0), 4.5);
+final List<SpaceInvader> enemiesWithinFiringRange =
+        vpTree.getAllWithinDistance(playerPosition, 4.5);
 ```
 
 ## License

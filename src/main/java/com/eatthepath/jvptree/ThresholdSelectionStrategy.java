@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-public interface ThresholdSelectionStrategy<T> {
+public interface ThresholdSelectionStrategy<P, E extends P> {
 
     /**
      * Chooses a partitioning distance threshold appropriate for the given list of points. Implementations are allowed to
@@ -23,5 +23,5 @@ public interface ThresholdSelectionStrategy<T> {
      * @return a partitioning threshold distance appropriate for the given list of points; ideally, some points should
      * be closer to the origin than the returned threshold, and some should be farther
      */
-    <R extends T> double selectThreshold(List<R> points, R origin, DistanceFunction<? super R> distanceFunction);
+    double selectThreshold(List<E> points, P origin, DistanceFunction<P> distanceFunction);
 }

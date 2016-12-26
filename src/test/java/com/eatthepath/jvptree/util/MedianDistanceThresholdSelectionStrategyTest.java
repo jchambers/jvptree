@@ -14,8 +14,8 @@ public class MedianDistanceThresholdSelectionStrategyTest {
 
     @Test
     public void testSelectThreshold() {
-        final MedianDistanceThresholdSelectionStrategy<Integer> strategy =
-                new MedianDistanceThresholdSelectionStrategy<Integer>();
+        final MedianDistanceThresholdSelectionStrategy<Number, Integer> strategy =
+                new MedianDistanceThresholdSelectionStrategy<Number, Integer>();
 
         {
             final List<Integer> singleIntegerList = new ArrayList<Integer>();
@@ -42,7 +42,7 @@ public class MedianDistanceThresholdSelectionStrategyTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSelectThresholdEmptyList() {
-        new MedianDistanceThresholdSelectionStrategy<Integer>().selectThreshold(
+        new MedianDistanceThresholdSelectionStrategy<Number, Integer>().selectThreshold(
                 new ArrayList<Integer>(), 0, new IntegerDistanceFunction());
     }
 }

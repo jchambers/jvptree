@@ -9,13 +9,13 @@ import org.junit.Test;
 
 public class NearestNeighborCollectorTest {
 
-    private NearestNeighborCollector<Integer> collector;
+    private NearestNeighborCollector<Number, Integer> collector;
 
     private static final int CAPACITY = 5;
 
     @Before
     public void setup() {
-        this.collector = new NearestNeighborCollector<Integer>(0, new IntegerDistanceFunction(), CAPACITY);
+        this.collector = new NearestNeighborCollector<Number, Integer>(0, new IntegerDistanceFunction(), CAPACITY);
     }
 
     @Test
