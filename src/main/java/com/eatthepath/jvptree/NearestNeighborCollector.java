@@ -10,12 +10,12 @@ import java.util.PriorityQueue;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-class NearestNeighborCollector<E> {
-    private final E queryPoint;
+class NearestNeighborCollector<P, E extends P> {
+    private final P queryPoint;
     private final int capacity;
 
-    private final DistanceFunction<? super E> distanceFunction;
-    private final DistanceComparator<E> distanceComparator;
+    private final DistanceFunction<P> distanceFunction;
+    private final DistanceComparator<P> distanceComparator;
     private final PriorityQueue<E> priorityQueue;
 
     private double distanceToFarthestPoint;
@@ -31,7 +31,7 @@ class NearestNeighborCollector<E> {
      * potential neighbors
      * @param capacity the maximum number of nearest neighbors to collect
      */
-    public NearestNeighborCollector(final E queryPoint, final DistanceFunction<? super E> distanceFunction, final int capacity) {
+    public NearestNeighborCollector(final P queryPoint, final DistanceFunction<P> distanceFunction, final int capacity) {
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
         }
@@ -40,7 +40,7 @@ class NearestNeighborCollector<E> {
         this.distanceFunction = distanceFunction;
         this.capacity = capacity;
 
-        this.distanceComparator = new DistanceComparator<E>(queryPoint, distanceFunction);
+        this.distanceComparator = new DistanceComparator<P>(queryPoint, distanceFunction);
 
         this.priorityQueue =
                 new PriorityQueue<E>(this.capacity, java.util.Collections.reverseOrder(this.distanceComparator));
@@ -51,7 +51,7 @@ class NearestNeighborCollector<E> {
      *
      * @return the query point for this collector
      */
-    public E getQueryPoint() {
+    public P getQueryPoint() {
         return this.queryPoint;
     }
 

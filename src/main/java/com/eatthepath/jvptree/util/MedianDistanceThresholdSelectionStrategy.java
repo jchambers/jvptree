@@ -11,7 +11,7 @@ import com.eatthepath.jvptree.ThresholdSelectionStrategy;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-public class MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSelectionStrategy<T> {
+public class MedianDistanceThresholdSelectionStrategy<P, E extends P> implements ThresholdSelectionStrategy<P, E> {
 
     /**
      * Returns the median distance of the given points from the given origin. This method will partially sort the list
@@ -25,7 +25,7 @@ public class MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSel
      *
      * @throws IllegalArgumentException if the given list of points is empty
      */
-    public <R extends T> double selectThreshold(final List<R> points, final R origin, final DistanceFunction<? super R> distanceFunction) {
+    public double selectThreshold(final List<E> points, final P origin, final DistanceFunction<P> distanceFunction) {
         if (points.isEmpty()) {
             throw new IllegalArgumentException("Point list must not be empty.");
         }

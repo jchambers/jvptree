@@ -13,11 +13,11 @@ import java.util.Random;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-class VPTreeNode<E> {
+class VPTreeNode<P, E extends P> {
 
     private final int capacity;
-    private final DistanceFunction<? super E> distanceFunction;
-    private final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy;
+    private final DistanceFunction<P> distanceFunction;
+    private final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy;
 
     private ArrayList<E> points;
 
@@ -25,8 +25,8 @@ class VPTreeNode<E> {
 
     private double threshold;
 
-    private VPTreeNode<E> closer;
-    private VPTreeNode<E> farther;
+    private VPTreeNode<P, E> closer;
+    private VPTreeNode<P, E> farther;
 
     /**
      * Constructs a new node that contains the given collection of points. If the given collection of points is larger
@@ -40,8 +40,8 @@ class VPTreeNode<E> {
      * capacity if the given collection of points cannot be partitioned (for example, because all of the points are an
      * equal distance away from the vantage point)
      */
-    public VPTreeNode(final List<E> points, final DistanceFunction<? super E> distanceFunction,
-            final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final int capacity) {
+    public VPTreeNode(final List<E> points, final DistanceFunction<P> distanceFunction,
+            final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy, final int capacity) {
 
         if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
@@ -68,9 +68,9 @@ class VPTreeNode<E> {
                 final int firstIndexPastThreshold =
                         VPTreeNode.partitionPoints(points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                this.closer = new VPTreeNode<E>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                this.farther = new VPTreeNode<E>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-            } catch (PartitionException e) {
+                this.closer = new VPTreeNode<P, E>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                this.farther = new VPTreeNode<P, E>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            } catch (final PartitionException e) {
                 // We couldn't partition the list, so just store all of the points in this node
                 this.points = new ArrayList<E>(points);
             }
@@ -114,11 +114,11 @@ class VPTreeNode<E> {
                     final int firstIndexPastThreshold =
                             VPTreeNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                    this.closer = new VPTreeNode<E>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                    this.farther = new VPTreeNode<E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.closer = new VPTreeNode<P, E>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.farther = new VPTreeNode<P, E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
 
                     this.points = null;
-                } catch (PartitionException e) {
+                } catch (final PartitionException e) {
                     // We couldn't partition the list in any useful way; just keep all of the points here
                 }
             }
@@ -135,7 +135,7 @@ class VPTreeNode<E> {
     public boolean remove(final E point) {
         if (this.points == null) {
             // This is not a leaf node; try to remove the point from an appropriate child node
-            final VPTreeNode<E> childNode = this.getChildNodeForPoint(point);
+            final VPTreeNode<P, E> childNode = this.getChildNodeForPoint(point);
             final boolean modified = childNode.remove(point);
 
             if (childNode.size() == 0) {
@@ -190,9 +190,9 @@ class VPTreeNode<E> {
             final int firstIndexPastThreshold =
                     VPTreeNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
 
-            this.closer = new VPTreeNode<E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-            this.farther = new VPTreeNode<E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-        } catch (PartitionException e) {
+            this.closer = new VPTreeNode<P, E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            this.farther = new VPTreeNode<P, E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+        } catch (final PartitionException e) {
             this.closer = null;
             this.farther = null;
 
@@ -211,9 +211,9 @@ class VPTreeNode<E> {
         return this.points == null ? this.getChildNodeForPoint(point).contains(point) : this.points.contains(point);
     }
 
-    public void collectNearestNeighbors(final NearestNeighborCollector<E> collector) {
+    public void collectNearestNeighbors(final NearestNeighborCollector<P, E> collector) {
         if (this.points == null) {
-            final VPTreeNode<E> firstNodeSearched = this.getChildNodeForPoint(collector.getQueryPoint());
+            final VPTreeNode<P, E> firstNodeSearched = this.getChildNodeForPoint(collector.getQueryPoint());
             firstNodeSearched.collectNearestNeighbors(collector);
 
             final double distanceFromVantagePointToQueryPoint =
@@ -239,7 +239,7 @@ class VPTreeNode<E> {
                 // the within-threshold node if it's "easier" to get from the query point to this node's region than it
                 // is to get from the query point to the most distant match, since there could be a point within this
                 // node's threshold that's closer than the most distant match.
-                double distanceFromQueryPointToThreshold = distanceFromVantagePointToQueryPoint - this.threshold;
+                final double distanceFromQueryPointToThreshold = distanceFromVantagePointToQueryPoint - this.threshold;
 
                 if(distanceFromQueryPointToThreshold <= distanceFromQueryPointToFarthestPoint) {
                     this.closer.collectNearestNeighbors(collector);
@@ -259,9 +259,9 @@ class VPTreeNode<E> {
      * @param maxDistance the distance within which to collect points
      * @param collection the collection to which points within the maximum distance should be added
      */
-    public void collectAllWithinDistance(final E queryPoint, final double maxDistance, final Collection<E> collection) {
+    public void collectAllWithinDistance(final P queryPoint, final double maxDistance, final Collection<E> collection) {
         if (this.points == null) {
-            double distanceFromVantagePointToQueryPoint =
+            final double distanceFromVantagePointToQueryPoint =
                     this.distanceFunction.getDistance(this.vantagePoint, queryPoint);
 
             // We want to search any of this node's children that intersect with the query region
@@ -291,7 +291,7 @@ class VPTreeNode<E> {
      * @return this node's "closer" child node if the given point is within this node's distance threshold of the
      * vantage point or the "farther" node otherwise
      */
-    private VPTreeNode<E> getChildNodeForPoint(final E point) {
+    private VPTreeNode<P, E> getChildNodeForPoint(final P point) {
         return this.distanceFunction.getDistance(this.vantagePoint, point) <= this.threshold ? this.closer : this.farther;
     }
 
@@ -321,8 +321,8 @@ class VPTreeNode<E> {
         final int pointsAdded;
 
         if (this.points == null) {
-            int pointsAddedFromCloserNode = this.closer.addPointsToArray(array, offset);
-            int pointsAddedFromFartherNode = this.farther.addPointsToArray(array, offset + pointsAddedFromCloserNode);
+            final int pointsAddedFromCloserNode = this.closer.addPointsToArray(array, offset);
+            final int pointsAddedFromFartherNode = this.farther.addPointsToArray(array, offset + pointsAddedFromCloserNode);
 
             pointsAdded = pointsAddedFromCloserNode + pointsAddedFromFartherNode;
         } else {

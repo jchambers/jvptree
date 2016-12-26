@@ -12,7 +12,7 @@ import com.eatthepath.jvptree.ThresholdSelectionStrategy;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-public class SamplingMedianDistanceThresholdSelectionStrategy<T> extends MedianDistanceThresholdSelectionStrategy<T> implements ThresholdSelectionStrategy<T> {
+public class SamplingMedianDistanceThresholdSelectionStrategy<P, E extends P> extends MedianDistanceThresholdSelectionStrategy<P, E> implements ThresholdSelectionStrategy<P, E> {
 
     private final int numberOfSamples;
 
@@ -39,7 +39,7 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<T> extends MedianD
      * @return the median distance from the origin to the given list of points
      */
     @Override
-    public <R extends T> double selectThreshold(final List<R> points, final R origin, final DistanceFunction<? super R> distanceFunction) {
+    public double selectThreshold(final List<E> points, final P origin, final DistanceFunction<P> distanceFunction) {
         return super.selectThreshold(this.getSampledPoints(points), origin, distanceFunction);
     }
 
@@ -50,12 +50,12 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<T> extends MedianD
      *
      * @return a list containing at most the number of points chosen at construction time
      */
-    private <R extends T> List<R> getSampledPoints(final List<R> points) {
-        final List<R> sampledPoints;
+    private List<E> getSampledPoints(final List<E> points) {
+        final List<E> sampledPoints;
         final int numberOfPoints = points.size();
 
         if (numberOfPoints > this.numberOfSamples) {
-            sampledPoints = new ArrayList<R>(this.numberOfSamples);
+            sampledPoints = new ArrayList<E>(this.numberOfSamples);
 
             for (int i = 0; i < this.numberOfSamples; i++) {
                 sampledPoints.add(points.get((i * numberOfPoints) / this.numberOfSamples));

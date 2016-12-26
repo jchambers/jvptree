@@ -23,14 +23,17 @@ import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrat
  * collection of points at construction time is the most efficient approach.</p>
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
+ *
+ * @param P the base type of points between which distances can be measured
+ * @param E the specific type of point contained in this vantage point tree
  */
-public class VPTree<E> implements SpatialIndex<E> {
+public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
 
-    private final DistanceFunction<? super E> distanceFunction;
-    private final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy;
+    private final DistanceFunction<P> distanceFunction;
+    private final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy;
     private final int nodeCapacity;
 
-    private VPTreeNode<E> rootNode;
+    private VPTreeNode<P, E> rootNode;
 
     public static final int DEFAULT_NODE_CAPACITY = 32;
 
@@ -41,7 +44,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      *
      * @param distanceFunction the distance function to use to calculate the distance between points
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction) {
+    public VPTree(final DistanceFunction<P> distanceFunction) {
         this(distanceFunction, (Collection<E>) null);
     }
 
@@ -54,8 +57,8 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final Collection<E> points) {
-        this(distanceFunction, new SamplingMedianDistanceThresholdSelectionStrategy<E>(
+    public VPTree(final DistanceFunction<P> distanceFunction, final Collection<E> points) {
+        this(distanceFunction, new SamplingMedianDistanceThresholdSelectionStrategy<P, E>(
                 SamplingMedianDistanceThresholdSelectionStrategy.DEFAULT_NUMBER_OF_SAMPLES),
                 VPTree.DEFAULT_NODE_CAPACITY, points);
     }
@@ -68,7 +71,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy) {
+    public VPTree(final DistanceFunction<P> distanceFunction, final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy) {
         this(distanceFunction, thresholdSelectionStrategy, VPTree.DEFAULT_NODE_CAPACITY, null);
     }
 
@@ -81,7 +84,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final Collection<E> points) {
+    public VPTree(final DistanceFunction<P> distanceFunction, final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy, final Collection<E> points) {
         this(distanceFunction, thresholdSelectionStrategy, VPTree.DEFAULT_NODE_CAPACITY, points);
     }
 
@@ -94,7 +97,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final int nodeCapacity) {
+    public VPTree(final DistanceFunction<P> distanceFunction, final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy, final int nodeCapacity) {
         this(distanceFunction, thresholdSelectionStrategy, nodeCapacity, null);
     }
 
@@ -108,13 +111,13 @@ public class VPTree<E> implements SpatialIndex<E> {
      * @param nodeCapacity the largest capacity a node may have before it should be partitioned
      * @param points the points with which this tree should be initially populated; may be {@code null}
      */
-    public VPTree(final DistanceFunction<? super E> distanceFunction, final ThresholdSelectionStrategy<? super E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
+    public VPTree(final DistanceFunction<P> distanceFunction, final ThresholdSelectionStrategy<P, E> thresholdSelectionStrategy, final int nodeCapacity, final Collection<E> points) {
         this.distanceFunction = distanceFunction;
         this.thresholdSelectionStrategy = thresholdSelectionStrategy;
         this.nodeCapacity = nodeCapacity;
 
         if (points != null && !points.isEmpty()) {
-            this.rootNode = new VPTreeNode<E>(
+            this.rootNode = new VPTreeNode<P, E>(
                     new ArrayList<E>(points),
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
@@ -126,14 +129,14 @@ public class VPTree<E> implements SpatialIndex<E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getNearestNeighbors(java.lang.Object, int)
      */
-    public List<E> getNearestNeighbors(E queryPoint, int maxResults) {
+    public List<E> getNearestNeighbors(final P queryPoint, final int maxResults) {
         final List<E> nearestNeighbors;
 
         if (this.rootNode == null) {
             nearestNeighbors = null;
         } else {
-            final NearestNeighborCollector<E> collector =
-                    new NearestNeighborCollector<E>(queryPoint, this.distanceFunction, maxResults);
+            final NearestNeighborCollector<P, E> collector =
+                    new NearestNeighborCollector<P, E>(queryPoint, this.distanceFunction, maxResults);
 
             this.rootNode.collectNearestNeighbors(collector);
 
@@ -147,7 +150,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getAllWithinRange(java.lang.Object, double)
      */
-    public List<E> getAllWithinDistance(final E queryPoint, final double maxDistance) {
+    public List<E> getAllWithinDistance(final P queryPoint, final double maxDistance) {
         final List<E> pointsWithinRange;
 
         if (this.rootNode == null) {
@@ -184,7 +187,7 @@ public class VPTree<E> implements SpatialIndex<E> {
     public boolean contains(final Object o) {
         try {
             return this.rootNode == null ? false : this.rootNode.contains((E) o);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             return false;
         }
     }
@@ -256,7 +259,7 @@ public class VPTree<E> implements SpatialIndex<E> {
      */
     public boolean add(final E point) {
         if (this.rootNode == null) {
-            this.rootNode = new VPTreeNode<E>(
+            this.rootNode = new VPTreeNode<P, E>(
                     java.util.Collections.singletonList(point),
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
@@ -290,7 +293,7 @@ public class VPTree<E> implements SpatialIndex<E> {
     public boolean remove(final Object point) {
         try {
             return this.rootNode == null ? false : this.rootNode.remove((E) point);
-        } catch (ClassCastException e) {
+        } catch (final ClassCastException e) {
             return false;
         }
     }
