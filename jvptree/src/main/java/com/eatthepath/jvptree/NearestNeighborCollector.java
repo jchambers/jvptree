@@ -40,10 +40,10 @@ class NearestNeighborCollector<P, E extends P> {
         this.distanceFunction = distanceFunction;
         this.capacity = capacity;
 
-        this.distanceComparator = new DistanceComparator<P>(queryPoint, distanceFunction);
+        this.distanceComparator = new DistanceComparator<>(queryPoint, distanceFunction);
 
         this.priorityQueue =
-                new PriorityQueue<E>(this.capacity, java.util.Collections.reverseOrder(this.distanceComparator));
+                new PriorityQueue<>(this.capacity, java.util.Collections.reverseOrder(this.distanceComparator));
     }
 
     /**
@@ -102,7 +102,7 @@ class NearestNeighborCollector<P, E extends P> {
      * @return a list of points retained by this collector, sorted by distance from the query point
      */
     public List<E> toSortedList() {
-        final ArrayList<E> sortedList = new ArrayList<E>(this.priorityQueue);
+        final ArrayList<E> sortedList = new ArrayList<>(this.priorityQueue);
         java.util.Collections.sort(sortedList, this.distanceComparator);
 
         return sortedList;

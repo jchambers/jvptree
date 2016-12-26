@@ -16,13 +16,13 @@ public class VPTreeNodeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeNoPoints() {
-        new VPTreeNode<Number, Integer>(new ArrayList<Integer>(), new IntegerDistanceFunction(),
+        new VPTreeNode<>(new ArrayList<Integer>(), new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Number, Integer>(), VPTree.DEFAULT_NODE_CAPACITY);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeZeroCapacity() {
-        new VPTreeNode<Number, Integer>(java.util.Collections.singletonList(7), new IntegerDistanceFunction(),
+        new VPTreeNode<>(java.util.Collections.singletonList(7), new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Number, Integer>(), 0);
     }
 
@@ -82,7 +82,7 @@ public class VPTreeNodeTest {
 
     @Test
     public void testRetainAll() {
-        final ArrayList<Integer> pointsToRetain = new ArrayList<Integer>();
+        final ArrayList<Integer> pointsToRetain = new ArrayList<>();
 
         for (int i = 0; i < TEST_NODE_SIZE / 8; i++) {
             pointsToRetain.add(i);
@@ -107,7 +107,7 @@ public class VPTreeNodeTest {
 
         for (final VPTreeNode<Number, Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final NearestNeighborCollector<Number, Integer> collector =
-                    new NearestNeighborCollector<Number, Integer>(queryPoint, new IntegerDistanceFunction(), numberOfNeighbors);
+                    new NearestNeighborCollector<>(queryPoint, new IntegerDistanceFunction(), numberOfNeighbors);
 
             testNode.collectNearestNeighbors(collector);
 
@@ -124,7 +124,7 @@ public class VPTreeNodeTest {
         final int maxRange = TEST_NODE_SIZE / 8;
 
         for (final VPTreeNode<Number, Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
-            final ArrayList<Integer> collectedPoints = new ArrayList<Integer>();
+            final ArrayList<Integer> collectedPoints = new ArrayList<>();
 
             testNode.collectAllWithinDistance(queryPoint, maxRange, collectedPoints);
 
@@ -149,10 +149,10 @@ public class VPTreeNodeTest {
     @Test
     public void testCollectIterators() {
         for (final VPTreeNode<Number, Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
-            final ArrayList<Iterator<Integer>> iterators = new ArrayList<Iterator<Integer>>();
+            final ArrayList<Iterator<Integer>> iterators = new ArrayList<>();
             testNode.collectIterators(iterators);
 
-            final ArrayList<Integer> pointsFromIterators = new ArrayList<Integer>();
+            final ArrayList<Integer> pointsFromIterators = new ArrayList<>();
 
             for (final Iterator<Integer> iterator : iterators) {
                 while (iterator.hasNext()) {
@@ -166,21 +166,21 @@ public class VPTreeNodeTest {
     }
 
     private Collection<VPTreeNode<Number, Integer>> createTestNodes(final int nodeSize) {
-        final ArrayList<Integer> points = new ArrayList<Integer>(nodeSize);
+        final ArrayList<Integer> points = new ArrayList<>(nodeSize);
 
         for (int i = 0; i < nodeSize; i++) {
             points.add(i);
         }
 
-        final ArrayList<VPTreeNode<Number, Integer>> testNodes = new ArrayList<VPTreeNode<Number, Integer>>(3);
+        final ArrayList<VPTreeNode<Number, Integer>> testNodes = new ArrayList<>(3);
 
-        testNodes.add(new VPTreeNode<Number, Integer>(points, new IntegerDistanceFunction(),
+        testNodes.add(new VPTreeNode<>(points, new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Number, Integer>(), points.size() * 2));
 
-        testNodes.add(new VPTreeNode<Number, Integer>(points, new IntegerDistanceFunction(),
+        testNodes.add(new VPTreeNode<>(points, new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Number, Integer>(), points.size()));
 
-        testNodes.add(new VPTreeNode<Number, Integer>(points, new IntegerDistanceFunction(),
+        testNodes.add(new VPTreeNode<>(points, new IntegerDistanceFunction(),
                 new MedianDistanceThresholdSelectionStrategy<Number, Integer>(), points.size() / 8));
 
         return testNodes;

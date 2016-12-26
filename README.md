@@ -18,7 +18,7 @@ If you use [Maven](http://maven.apache.org/), you can add jvptree to your projec
 </dependency>
 ```
 
-If you don't use Maven, you can download jvptree as a `.jar` file and add it to your project directly. Jvptree has no external dependencies, and works with Java 1.5 and newer.
+If you don't use Maven, you can download jvptree as a `.jar` file and add it to your project directly. Jvptree has no external dependencies, and works with Java 1.7 and newer.
 
 ## Major concepts
 

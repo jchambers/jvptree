@@ -15,7 +15,7 @@ public class NearestNeighborCollectorTest {
 
     @Before
     public void setup() {
-        this.collector = new NearestNeighborCollector<Number, Integer>(0, new IntegerDistanceFunction(), CAPACITY);
+        this.collector = new NearestNeighborCollector<>(0, new IntegerDistanceFunction(), CAPACITY);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class NearestNeighborCollectorTest {
         this.collector.offerPoint(5);
         this.collector.offerPoint(5);
 
-        final ArrayList<Integer> expectedList = new ArrayList<Integer>();
+        final ArrayList<Integer> expectedList = new ArrayList<>();
         java.util.Collections.addAll(expectedList, 1, 2, 3, 4, 5);
 
         assertEquals(CAPACITY, expectedList.size());

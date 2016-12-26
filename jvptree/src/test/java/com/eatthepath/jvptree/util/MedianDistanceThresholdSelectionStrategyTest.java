@@ -15,17 +15,17 @@ public class MedianDistanceThresholdSelectionStrategyTest {
     @Test
     public void testSelectThreshold() {
         final MedianDistanceThresholdSelectionStrategy<Number, Integer> strategy =
-                new MedianDistanceThresholdSelectionStrategy<Number, Integer>();
+                new MedianDistanceThresholdSelectionStrategy<>();
 
         {
-            final List<Integer> singleIntegerList = new ArrayList<Integer>();
+            final List<Integer> singleIntegerList = new ArrayList<>();
             singleIntegerList.add(7);
 
             assertEquals(7, (int)strategy.selectThreshold(singleIntegerList, 0, new IntegerDistanceFunction()));
         }
 
         {
-            final List<Integer> multipleIntegerList = new ArrayList<Integer>();
+            final List<Integer> multipleIntegerList = new ArrayList<>();
             multipleIntegerList.add(2);
             multipleIntegerList.add(9);
             multipleIntegerList.add(3);

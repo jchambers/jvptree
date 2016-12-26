@@ -68,15 +68,15 @@ class VPTreeNode<P, E extends P> {
                 final int firstIndexPastThreshold =
                         VPTreeNode.partitionPoints(points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                this.closer = new VPTreeNode<P, E>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                this.farther = new VPTreeNode<P, E>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                this.closer = new VPTreeNode<>(points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                this.farther = new VPTreeNode<>(points.subList(firstIndexPastThreshold, points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
             } catch (final PartitionException e) {
                 // We couldn't partition the list, so just store all of the points in this node
-                this.points = new ArrayList<E>(points);
+                this.points = new ArrayList<>(points);
             }
         } else {
             // No need to partition; just store everything in this node
-            this.points = new ArrayList<E>(points);
+            this.points = new ArrayList<>(points);
         }
     }
 
@@ -114,8 +114,8 @@ class VPTreeNode<P, E extends P> {
                     final int firstIndexPastThreshold =
                             VPTreeNode.partitionPoints(this.points, this.vantagePoint, this.threshold, this.distanceFunction);
 
-                    this.closer = new VPTreeNode<P, E>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-                    this.farther = new VPTreeNode<P, E>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.closer = new VPTreeNode<>(this.points.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+                    this.farther = new VPTreeNode<>(this.points.subList(firstIndexPastThreshold, this.points.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
 
                     this.points = null;
                 } catch (final PartitionException e) {
@@ -181,7 +181,7 @@ class VPTreeNode<P, E extends P> {
      * Gathers points from child nodes and re-partitions them into new child nodes.
      */
     private void redistributePointsFromChildNodes() {
-        final ArrayList<E> collectedPoints = new ArrayList<E>(this.size());
+        final ArrayList<E> collectedPoints = new ArrayList<>(this.size());
         this.addAllPointsToCollection(collectedPoints);
 
         this.threshold = this.thresholdSelectionStrategy.selectThreshold(collectedPoints, this.vantagePoint, this.distanceFunction);
@@ -190,8 +190,8 @@ class VPTreeNode<P, E extends P> {
             final int firstIndexPastThreshold =
                     VPTreeNode.partitionPoints(collectedPoints, this.vantagePoint, this.threshold, this.distanceFunction);
 
-            this.closer = new VPTreeNode<P, E>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
-            this.farther = new VPTreeNode<P, E>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            this.closer = new VPTreeNode<>(collectedPoints.subList(0, firstIndexPastThreshold), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
+            this.farther = new VPTreeNode<>(collectedPoints.subList(firstIndexPastThreshold, collectedPoints.size()), this.distanceFunction, this.thresholdSelectionStrategy, this.capacity);
         } catch (final PartitionException e) {
             this.closer = null;
             this.farther = null;

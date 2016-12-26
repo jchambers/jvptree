@@ -117,8 +117,8 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
         this.nodeCapacity = nodeCapacity;
 
         if (points != null && !points.isEmpty()) {
-            this.rootNode = new VPTreeNode<P, E>(
-                    new ArrayList<E>(points),
+            this.rootNode = new VPTreeNode<>(
+                    new ArrayList<>(points),
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
                     this.nodeCapacity);
@@ -129,6 +129,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getNearestNeighbors(java.lang.Object, int)
      */
+    @Override
     public List<E> getNearestNeighbors(final P queryPoint, final int maxResults) {
         final List<E> nearestNeighbors;
 
@@ -136,7 +137,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
             nearestNeighbors = null;
         } else {
             final NearestNeighborCollector<P, E> collector =
-                    new NearestNeighborCollector<P, E>(queryPoint, this.distanceFunction, maxResults);
+                    new NearestNeighborCollector<>(queryPoint, this.distanceFunction, maxResults);
 
             this.rootNode.collectNearestNeighbors(collector);
 
@@ -150,13 +151,14 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see com.eatthepath.jvptree.SpatialIndex#getAllWithinRange(java.lang.Object, double)
      */
+    @Override
     public List<E> getAllWithinDistance(final P queryPoint, final double maxDistance) {
         final List<E> pointsWithinRange;
 
         if (this.rootNode == null) {
             pointsWithinRange = null;
         } else {
-            pointsWithinRange = new ArrayList<E>();
+            pointsWithinRange = new ArrayList<>();
             this.rootNode.collectAllWithinDistance(queryPoint, maxDistance, pointsWithinRange);
         }
 
@@ -167,6 +169,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#size()
      */
+    @Override
     public int size() {
         return this.rootNode == null ? 0 : this.rootNode.size();
     }
@@ -175,6 +178,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return this.size() == 0;
     }
@@ -183,6 +187,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#contains(java.lang.Object)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public boolean contains(final Object o) {
         try {
@@ -196,6 +201,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#containsAll(java.util.Collection)
      */
+    @Override
     public boolean containsAll(final Collection<?> points) {
         for (final Object point : points) {
             if (!this.contains(point)) { return false; }
@@ -208,20 +214,22 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#iterator()
      */
+    @Override
     public Iterator<E> iterator() {
-        final ArrayList<Iterator<E>> iterators = new ArrayList<Iterator<E>>();
+        final ArrayList<Iterator<E>> iterators = new ArrayList<>();
 
         if (this.rootNode != null) {
             this.rootNode.collectIterators(iterators);
         }
 
-        return new MetaIterator<E>(iterators);
+        return new MetaIterator<>(iterators);
     }
 
     /*
      * (non-Javadoc)
      * @see java.util.Collection#toArray()
      */
+    @Override
     public Object[] toArray() {
         final Object[] array = new Object[this.size()];
 
@@ -236,6 +244,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#toArray(java.lang.Object[])
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(final T[] array) {
         final T[] arrayToPopulate;
@@ -257,9 +266,10 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#add(java.lang.Object)
      */
+    @Override
     public boolean add(final E point) {
         if (this.rootNode == null) {
-            this.rootNode = new VPTreeNode<P, E>(
+            this.rootNode = new VPTreeNode<>(
                     java.util.Collections.singletonList(point),
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
@@ -276,6 +286,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#addAll(java.util.Collection)
      */
+    @Override
     public boolean addAll(final Collection<? extends E> points) {
         for (final E point : points) {
             this.add(point);
@@ -289,6 +300,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#remove(java.lang.Object)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public boolean remove(final Object point) {
         try {
@@ -302,6 +314,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
+    @Override
     public boolean removeAll(final Collection<?> points) {
         boolean pointRemoved = false;
 
@@ -316,6 +329,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#retainAll(java.util.Collection)
      */
+    @Override
     public boolean retainAll(final Collection<?> points) {
         return this.rootNode == null ? false : this.rootNode.retainAll(points);
     }
@@ -324,6 +338,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * (non-Javadoc)
      * @see java.util.Collection#clear()
      */
+    @Override
     public void clear() {
         this.rootNode = null;
     }

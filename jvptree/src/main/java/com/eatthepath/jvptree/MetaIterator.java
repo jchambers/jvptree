@@ -21,7 +21,7 @@ class MetaIterator<E> implements Iterator<E> {
      * @param iterators the iterators to concatenate
      */
     public MetaIterator(final Collection<Iterator<E>> iterators) {
-        this.iterators = new ArrayDeque<Iterator<E>>(iterators);
+        this.iterators = new ArrayDeque<>(iterators);
     }
 
     /*
