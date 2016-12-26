@@ -55,7 +55,7 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<P, E extends P> ex
         final int numberOfPoints = points.size();
 
         if (numberOfPoints > this.numberOfSamples) {
-            sampledPoints = new ArrayList<E>(this.numberOfSamples);
+            sampledPoints = new ArrayList<>(this.numberOfSamples);
 
             for (int i = 0; i < this.numberOfSamples; i++) {
                 sampledPoints.add(points.get((i * numberOfPoints) / this.numberOfSamples));

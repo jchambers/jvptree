@@ -39,7 +39,7 @@ public class VPTreeQueryBenchmark {
             this.points.add(this.createRandomPoint());
         }
 
-        this.vptree = new VPTree<CartesianPoint, CartesianPoint>(this.distanceFunction,
+        this.vptree = new VPTree<>(this.distanceFunction,
                 new SamplingMedianDistanceThresholdSelectionStrategy<CartesianPoint, CartesianPoint>(32),
                 this.nodeSize, this.points);
     }
