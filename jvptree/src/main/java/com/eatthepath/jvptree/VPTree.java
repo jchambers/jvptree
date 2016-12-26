@@ -2,6 +2,7 @@ package com.eatthepath.jvptree;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
 
         if (points != null && !points.isEmpty()) {
             this.rootNode = new VPTreeNode<>(
-                    new ArrayList<>(points),
+                    points,
                     this.distanceFunction,
                     this.thresholdSelectionStrategy,
                     this.nodeCapacity);
@@ -268,58 +269,68 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      */
     @Override
     public boolean add(final E point) {
-        if (this.rootNode == null) {
-            this.rootNode = new VPTreeNode<>(
-                    java.util.Collections.singletonList(point),
-                    this.distanceFunction,
-                    this.thresholdSelectionStrategy,
-                    this.nodeCapacity);
-        } else {
-            this.rootNode.add(point);
-        }
-
-        // Adding a point always modifies a VPTree
-        return true;
+        return this.addAll(Collections.singletonList(point));
     }
 
     /*
      * (non-Javadoc)
      * @see java.util.Collection#addAll(java.util.Collection)
      */
-    @Override
+    @SuppressWarnings("unchecked")
     public boolean addAll(final Collection<? extends E> points) {
-        for (final E point : points) {
-            this.add(point);
+        // Adding points always modifies a VPTree
+        final boolean modified = !points.isEmpty();
+
+        if (this.rootNode == null) {
+            // We don't need to anneal here because annealing happens automatically as part of node construction
+            this.rootNode = new VPTreeNode<>(
+                    (Collection<E>) points,
+                    this.distanceFunction,
+                    this.thresholdSelectionStrategy,
+                    this.nodeCapacity);
+        } else {
+            for (final E point : points) {
+                this.rootNode.add(point);
+            }
+
+            if (modified) {
+                this.rootNode.anneal();
+            }
         }
 
-        // Adding points always modifies a VPTree
-        return !points.isEmpty();
+        return modified;
     }
 
     /*
      * (non-Javadoc)
      * @see java.util.Collection#remove(java.lang.Object)
      */
-    @Override
-    @SuppressWarnings("unchecked")
     public boolean remove(final Object point) {
-        try {
-            return this.rootNode == null ? false : this.rootNode.remove((E) point);
-        } catch (final ClassCastException e) {
-            return false;
-        }
+        return this.removeAll(Collections.singletonList(point));
     }
 
     /*
      * (non-Javadoc)
      * @see java.util.Collection#removeAll(java.util.Collection)
      */
-    @Override
+    @SuppressWarnings("unchecked")
     public boolean removeAll(final Collection<?> points) {
         boolean pointRemoved = false;
 
-        for (final Object point : points) {
-            pointRemoved = this.remove(point) || pointRemoved;
+        if (this.rootNode == null) {
+            pointRemoved = false;
+        } else {
+            for (final Object point : points) {
+                try {
+                    pointRemoved = this.rootNode.remove((E) point) || pointRemoved;
+                } catch (final ClassCastException ignored) {
+                    // Ignored; no change to `pointRemoved`
+                }
+            }
+        }
+
+        if (pointRemoved) {
+            this.rootNode.anneal();
         }
 
         return pointRemoved;
@@ -331,7 +342,13 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      */
     @Override
     public boolean retainAll(final Collection<?> points) {
-        return this.rootNode == null ? false : this.rootNode.retainAll(points);
+        final boolean modified = this.rootNode == null ? false : this.rootNode.retainAll(points);
+
+        if (modified) {
+            this.rootNode.anneal();
+        }
+
+        return modified;
     }
 
     /*
