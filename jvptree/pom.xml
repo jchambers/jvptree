@@ -4,7 +4,8 @@
 
     <artifactId>jvptree</artifactId>
     <name>jvptree</name>
-    
+    <packaging>jar</packaging>
+
     <parent>
         <groupId>com.eatthepath</groupId>
         <artifactId>jvptree-parent</artifactId>
