@@ -38,6 +38,14 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
 
     public static final int DEFAULT_NODE_CAPACITY = 32;
 
+    private static final PointFilter<Object> NO_OP_POINT_FILTER = new PointFilter<Object>() {
+
+        @Override
+        public boolean allowPoint(final Object point) {
+            return true;
+        }
+    };
+
     /**
      * Constructs a new vp-tree that uses the given distance function and is initially empty. The constructed tree will
      * use a default {@link SamplingMedianDistanceThresholdSelectionStrategy} and node capacity
@@ -132,6 +140,11 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      */
     @Override
     public List<E> getNearestNeighbors(final P queryPoint, final int maxResults) {
+        return this.getNearestNeighbors(queryPoint, maxResults, NO_OP_POINT_FILTER);
+    }
+
+    @Override
+    public List<E> getNearestNeighbors(final P queryPoint, final int maxResults, final PointFilter<? super E> filter) {
         final List<E> nearestNeighbors;
 
         if (this.rootNode == null) {
@@ -140,7 +153,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
             final NearestNeighborCollector<P, E> collector =
                     new NearestNeighborCollector<>(queryPoint, this.distanceFunction, maxResults);
 
-            this.rootNode.collectNearestNeighbors(collector);
+            this.rootNode.collectNearestNeighbors(collector, filter);
 
             nearestNeighbors = collector.toSortedList();
         }
@@ -154,13 +167,18 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      */
     @Override
     public List<E> getAllWithinDistance(final P queryPoint, final double maxDistance) {
+        return this.getAllWithinDistance(queryPoint, maxDistance, NO_OP_POINT_FILTER);
+    }
+
+    @Override
+    public List<E> getAllWithinDistance(final P queryPoint, final double maxDistance, final PointFilter<? super E> filter) {
         final List<E> pointsWithinRange;
 
         if (this.rootNode == null) {
             pointsWithinRange = null;
         } else {
             pointsWithinRange = new ArrayList<>();
-            this.rootNode.collectAllWithinDistance(queryPoint, maxDistance, pointsWithinRange);
+            this.rootNode.collectAllWithinDistance(queryPoint, maxDistance, pointsWithinRange, filter);
         }
 
         return pointsWithinRange;

@@ -17,6 +17,10 @@ hs_err_pid*
 .project
 .settings/
 
+# IntelliJ project files
+.idea/
+*.iml
+
 # Generated output
 doc/
 
