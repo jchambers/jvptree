@@ -189,10 +189,10 @@ class VPTreeNode<P, E extends P> {
         return this.points == null ? this.getChildNodeForPoint(point).contains(point) : this.points.contains(point);
     }
 
-    public void collectNearestNeighbors(final NearestNeighborCollector<P, E> collector) {
+    public void collectNearestNeighbors(final NearestNeighborCollector<P, E> collector, final PointFilter<? super E> filter) {
         if (this.points == null) {
             final VPTreeNode<P, E> firstNodeSearched = this.getChildNodeForPoint(collector.getQueryPoint());
-            firstNodeSearched.collectNearestNeighbors(collector);
+            firstNodeSearched.collectNearestNeighbors(collector, filter);
 
             final double distanceFromVantagePointToQueryPoint =
                     this.distanceFunction.getDistance(this.vantagePoint, collector.getQueryPoint());
@@ -210,7 +210,7 @@ class VPTreeNode<P, E extends P> {
                 final double distanceFromQueryPointToThreshold = this.threshold - distanceFromVantagePointToQueryPoint;
 
                 if (distanceFromQueryPointToFarthestPoint > distanceFromQueryPointToThreshold) {
-                    this.farther.collectNearestNeighbors(collector);
+                    this.farther.collectNearestNeighbors(collector, filter);
                 }
             } else {
                 // We've already searched the node that contains points beyond this node's threshold. We want to search
@@ -220,12 +220,14 @@ class VPTreeNode<P, E extends P> {
                 final double distanceFromQueryPointToThreshold = distanceFromVantagePointToQueryPoint - this.threshold;
 
                 if(distanceFromQueryPointToThreshold <= distanceFromQueryPointToFarthestPoint) {
-                    this.closer.collectNearestNeighbors(collector);
+                    this.closer.collectNearestNeighbors(collector, filter);
                 }
             }
         } else {
             for (final E point : this.points) {
-                collector.offerPoint(point);
+                if (filter.allowPoint(point)) {
+                    collector.offerPoint(point);
+                }
             }
         }
     }
@@ -237,23 +239,25 @@ class VPTreeNode<P, E extends P> {
      * @param maxDistance the distance within which to collect points
      * @param collection the collection to which points within the maximum distance should be added
      */
-    public void collectAllWithinDistance(final P queryPoint, final double maxDistance, final Collection<E> collection) {
+    public void collectAllWithinDistance(final P queryPoint, final double maxDistance, final Collection<E> collection, final PointFilter<? super E> filter) {
         if (this.points == null) {
             final double distanceFromVantagePointToQueryPoint =
                     this.distanceFunction.getDistance(this.vantagePoint, queryPoint);
 
             // We want to search any of this node's children that intersect with the query region
             if (distanceFromVantagePointToQueryPoint <= this.threshold + maxDistance) {
-                this.closer.collectAllWithinDistance(queryPoint, maxDistance, collection);
+                this.closer.collectAllWithinDistance(queryPoint, maxDistance, collection, filter);
             }
 
             if (distanceFromVantagePointToQueryPoint + maxDistance > this.threshold) {
-                this.farther.collectAllWithinDistance(queryPoint, maxDistance, collection);
+                this.farther.collectAllWithinDistance(queryPoint, maxDistance, collection, filter);
             }
         } else {
             for (final E point : this.points) {
                 if (this.distanceFunction.getDistance(queryPoint, point) <= maxDistance) {
-                    collection.add(point);
+                    if (filter.allowPoint(point)) {
+                        collection.add(point);
+                    }
                 }
             }
         }

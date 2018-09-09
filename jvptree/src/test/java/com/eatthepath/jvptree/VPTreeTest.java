@@ -24,11 +24,56 @@ public class VPTreeTest {
         assertEquals(numberOfNeighbors, nearestNeighbors.size());
         assertEquals(queryPoint, nearestNeighbors.get(0));
         assertTrue(nearestNeighbors.containsAll(
-                java.util.Arrays.asList(new Integer[] { queryPoint - 1, queryPoint, queryPoint + 1 })));
+                java.util.Arrays.asList(queryPoint - 1, queryPoint, queryPoint + 1)));
+    }
+
+    @Test
+    public void testGetNearestNeighborsWithFilter() {
+        final VPTree<Number, Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
+
+        final Integer queryPoint = TEST_TREE_SIZE / 2;
+        final int numberOfNeighbors = 3;
+
+        final PointFilter<Integer> evenNumberFilter = new PointFilter<Integer>() {
+            @Override
+            public boolean allowPoint(final Integer point) {
+                return point % 2 == 0;
+            }
+        };
+
+        final List<Integer> nearestNeighbors = vpTree.getNearestNeighbors(queryPoint, numberOfNeighbors, evenNumberFilter);
+
+        assertEquals(numberOfNeighbors, nearestNeighbors.size());
+        assertEquals(queryPoint, nearestNeighbors.get(0));
+        assertTrue(nearestNeighbors.containsAll(
+                java.util.Arrays.asList(queryPoint - 2, queryPoint, queryPoint + 2)));
     }
 
     @Test
     public void testGetAllWithinRange() {
+        final VPTree<Number, Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
+
+        final Integer queryPoint = TEST_TREE_SIZE / 2;
+        final int maxDistance = TEST_TREE_SIZE / 8;
+
+        final PointFilter<Integer> evenNumberFilter = new PointFilter<Integer>() {
+            @Override
+            public boolean allowPoint(final Integer point) {
+                return point % 2 == 0;
+            }
+        };
+
+        final List<Integer> pointsWithinRange = vpTree.getAllWithinDistance(queryPoint, maxDistance, evenNumberFilter);
+
+        assertEquals(maxDistance + 1, pointsWithinRange.size());
+
+        for (int i = queryPoint - maxDistance; i <= queryPoint + maxDistance; i += 2) {
+            assertTrue(pointsWithinRange.contains(i));
+        }
+    }
+
+    @Test
+    public void testGetAllWithinRangeWithFilter() {
         final VPTree<Number, Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
         final Integer queryPoint = TEST_TREE_SIZE / 2;
@@ -263,7 +308,7 @@ public class VPTreeTest {
         }
 
         {
-            final Integer[] array = vpTree.toArray(new Integer[vpTree.size()]);
+            final Integer[] array = vpTree.toArray(new Integer[0]);
 
             assertEquals(vpTree.size(), array.length);
 

@@ -14,6 +14,14 @@ public class VPTreeNodeTest {
 
     private static final int TEST_NODE_SIZE = 32;
 
+    private static final PointFilter<Object> NO_OP_POINT_FILTER = new PointFilter<Object>() {
+
+        @Override
+        public boolean allowPoint(final Object point) {
+            return true;
+        }
+    };
+
     @Test(expected = IllegalArgumentException.class)
     public void testVPNodeNoPoints() {
         new VPTreeNode<>(new ArrayList<Integer>(), new IntegerDistanceFunction(),
@@ -109,12 +117,12 @@ public class VPTreeNodeTest {
             final NearestNeighborCollector<Number, Integer> collector =
                     new NearestNeighborCollector<>(queryPoint, new IntegerDistanceFunction(), numberOfNeighbors);
 
-            testNode.collectNearestNeighbors(collector);
+            testNode.collectNearestNeighbors(collector, NO_OP_POINT_FILTER);
 
             assertEquals(numberOfNeighbors, collector.toSortedList().size());
             assertEquals(queryPoint, collector.toSortedList().get(0));
             assertTrue(collector.toSortedList().containsAll(
-                    java.util.Arrays.asList(new Integer[] { queryPoint - 1, queryPoint, queryPoint + 1 })));
+                    java.util.Arrays.asList(queryPoint - 1, queryPoint, queryPoint + 1)));
         }
     }
 
@@ -126,7 +134,7 @@ public class VPTreeNodeTest {
         for (final VPTreeNode<Number, Integer> testNode : this.createTestNodes(TEST_NODE_SIZE)) {
             final ArrayList<Integer> collectedPoints = new ArrayList<>();
 
-            testNode.collectAllWithinDistance(queryPoint, maxRange, collectedPoints);
+            testNode.collectAllWithinDistance(queryPoint, maxRange, collectedPoints, NO_OP_POINT_FILTER);
 
             assertEquals((2 * maxRange) + 1, collectedPoints.size());
 
