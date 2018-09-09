@@ -25,8 +25,8 @@ import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrat
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  *
- * @param P the base type of points between which distances can be measured
- * @param E the specific type of point contained in this vantage point tree
+ * @param <P> the base type of points between which distances can be measured
+ * @param <E> the specific type of point contained in this vantage point tree
  */
 public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
 

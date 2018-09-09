@@ -17,8 +17,8 @@ import java.util.List;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  *
- * @param P the base type of points between which distances can be measured
- * @param E the specific type of point contained in this vantage point tree
+ * @param <P> the base type of points between which distances can be measured
+ * @param <E> the specific type of point contained in this vantage point tree
  */
 public interface SpatialIndex<P, E extends P> extends Collection<E> {
     /**
@@ -37,7 +37,7 @@ public interface SpatialIndex<P, E extends P> extends Collection<E> {
      * @return a list of the nearest neighbors to the given query point sorted by increasing distance from the query
      * point
      */
-    public List<E> getNearestNeighbors(P queryPoint, int maxResults);
+    List<E> getNearestNeighbors(P queryPoint, int maxResults);
 
     /**
      * Returns a list of all points within a given distance to a query point.
@@ -49,5 +49,5 @@ public interface SpatialIndex<P, E extends P> extends Collection<E> {
      * @return a list of all points within the given distance to the query point; the returned list is sorted in order
      * of increasing distance from the query point
      */
-    public List<E> getAllWithinDistance(P queryPoint, double maxDistance);
+    List<E> getAllWithinDistance(P queryPoint, double maxDistance);
 }
