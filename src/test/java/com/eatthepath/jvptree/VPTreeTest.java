@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class VPTreeTest {
@@ -21,9 +22,9 @@ public class VPTreeTest {
 
         final List<Integer> nearestNeighbors = vpTree.getNearestNeighbors(queryPoint, numberOfNeighbors);
 
-        assertEquals(numberOfNeighbors, nearestNeighbors.size());
-        assertEquals(queryPoint, nearestNeighbors.get(0));
-        assertTrue(nearestNeighbors.containsAll(
+        Assert.assertEquals(numberOfNeighbors, nearestNeighbors.size());
+        Assert.assertEquals(queryPoint, nearestNeighbors.get(0));
+        Assert.assertTrue(nearestNeighbors.containsAll(
                 java.util.Arrays.asList(queryPoint - 1, queryPoint, queryPoint + 1)));
     }
 
@@ -43,9 +44,9 @@ public class VPTreeTest {
 
         final List<Integer> nearestNeighbors = vpTree.getNearestNeighbors(queryPoint, numberOfNeighbors, evenNumberFilter);
 
-        assertEquals(numberOfNeighbors, nearestNeighbors.size());
-        assertEquals(queryPoint, nearestNeighbors.get(0));
-        assertTrue(nearestNeighbors.containsAll(
+        Assert.assertEquals(numberOfNeighbors, nearestNeighbors.size());
+        Assert.assertEquals(queryPoint, nearestNeighbors.get(0));
+        Assert.assertTrue(nearestNeighbors.containsAll(
                 java.util.Arrays.asList(queryPoint - 2, queryPoint, queryPoint + 2)));
     }
 
@@ -65,10 +66,10 @@ public class VPTreeTest {
 
         final List<Integer> pointsWithinRange = vpTree.getAllWithinDistance(queryPoint, maxDistance, evenNumberFilter);
 
-        assertEquals(maxDistance + 1, pointsWithinRange.size());
+        Assert.assertEquals(maxDistance + 1, pointsWithinRange.size());
 
         for (int i = queryPoint - maxDistance; i <= queryPoint + maxDistance; i += 2) {
-            assertTrue(pointsWithinRange.contains(i));
+            Assert.assertTrue(pointsWithinRange.contains(i));
         }
     }
 
@@ -81,10 +82,10 @@ public class VPTreeTest {
 
         final List<Integer> pointsWithinRange = vpTree.getAllWithinDistance(queryPoint, maxDistance);
 
-        assertEquals((2 * maxDistance) + 1, pointsWithinRange.size());
+        Assert.assertEquals((2 * maxDistance) + 1, pointsWithinRange.size());
 
         for (int i = queryPoint - maxDistance; i <= queryPoint + maxDistance; i++) {
-            assertTrue(pointsWithinRange.contains(i));
+            Assert.assertTrue(pointsWithinRange.contains(i));
         }
     }
 
@@ -120,13 +121,13 @@ public class VPTreeTest {
         final VPTree<Number, Integer> vpTree = this.createTestTree(0);
         final Integer testPoint = 12;
 
-        assertTrue(vpTree.isEmpty());
+        Assert.assertTrue(vpTree.isEmpty());
 
         vpTree.add(testPoint);
-        assertFalse(vpTree.isEmpty());
+        Assert.assertFalse(vpTree.isEmpty());
 
         vpTree.remove(testPoint);
-        assertTrue(vpTree.isEmpty());
+        Assert.assertTrue(vpTree.isEmpty());
     }
 
     @Test
@@ -134,10 +135,10 @@ public class VPTreeTest {
         final VPTree<Number, Integer> vpTree = this.createTestTree(0);
         final Integer testPoint = 12;
 
-        assertFalse(vpTree.contains(testPoint));
+        Assert.assertFalse(vpTree.contains(testPoint));
 
-        assertTrue(vpTree.add(testPoint));
-        assertTrue(vpTree.contains(testPoint));
+        Assert.assertTrue(vpTree.add(testPoint));
+        Assert.assertTrue(vpTree.contains(testPoint));
     }
 
     @Test
@@ -151,9 +152,9 @@ public class VPTreeTest {
             points.add(i);
         }
 
-        assertTrue(vpTree.addAll(points));
+        Assert.assertTrue(vpTree.addAll(points));
         assertEquals(points.size(), vpTree.size());
-        assertTrue(vpTree.containsAll(points));
+        Assert.assertTrue(vpTree.containsAll(points));
     }
 
     @Test
@@ -161,11 +162,11 @@ public class VPTreeTest {
         final VPTree<Number, Integer> vpTree = this.createTestTree(0);
         final Integer testPoint = 12;
 
-        assertFalse(vpTree.remove(testPoint));
+        Assert.assertFalse(vpTree.remove(testPoint));
 
         vpTree.add(testPoint);
-        assertTrue(vpTree.remove(testPoint));
-        assertTrue(vpTree.isEmpty());
+        Assert.assertTrue(vpTree.remove(testPoint));
+        Assert.assertTrue(vpTree.isEmpty());
     }
 
     @Test
@@ -178,14 +179,14 @@ public class VPTreeTest {
 
         final VPTree<Number, Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
-        assertTrue(vpTree.removeAll(pointsToRemove));
+        Assert.assertTrue(vpTree.removeAll(pointsToRemove));
         assertEquals(TEST_TREE_SIZE - pointsToRemove.size(), vpTree.size());
 
         for (final Integer point : pointsToRemove) {
-            assertFalse(vpTree.contains(point));
+            Assert.assertFalse(vpTree.contains(point));
         }
 
-        assertFalse(vpTree.removeAll(pointsToRemove));
+        Assert.assertFalse(vpTree.removeAll(pointsToRemove));
     }
 
     @Test
@@ -198,24 +199,24 @@ public class VPTreeTest {
 
         final VPTree<Number, Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
-        assertTrue(vpTree.retainAll(pointsToRetain));
+        Assert.assertTrue(vpTree.retainAll(pointsToRetain));
         assertEquals(pointsToRetain.size(), vpTree.size());
 
         for (final Integer point : pointsToRetain) {
-            assertTrue(vpTree.contains(point));
+            Assert.assertTrue(vpTree.contains(point));
         }
 
-        assertFalse(vpTree.retainAll(pointsToRetain));
+        Assert.assertFalse(vpTree.retainAll(pointsToRetain));
     }
 
     @Test
     public void testClear() {
         final VPTree<Number, Integer> vpTree = this.createTestTree(TEST_TREE_SIZE);
 
-        assertFalse(vpTree.isEmpty());
+        Assert.assertFalse(vpTree.isEmpty());
 
         vpTree.clear();
-        assertTrue(vpTree.isEmpty());
+        Assert.assertTrue(vpTree.isEmpty());
     }
 
     @Test
@@ -225,14 +226,14 @@ public class VPTreeTest {
         final Integer pointAdded = 12;
         final Integer pointNotAdded = 7;
 
-        assertFalse(vpTree.contains(pointAdded));
+        Assert.assertFalse(vpTree.contains(pointAdded));
 
         vpTree.add(pointAdded);
-        assertTrue(vpTree.contains(pointAdded));
-        assertFalse(vpTree.contains(pointNotAdded));
+        Assert.assertTrue(vpTree.contains(pointAdded));
+        Assert.assertFalse(vpTree.contains(pointNotAdded));
 
         vpTree.remove(pointAdded);
-        assertFalse(vpTree.contains(pointAdded));
+        Assert.assertFalse(vpTree.contains(pointAdded));
     }
 
     @Test
@@ -246,10 +247,10 @@ public class VPTreeTest {
 
         final VPTree<Number, Integer> vpTree = new VPTree<>(new IntegerDistanceFunction(), points);
 
-        assertTrue(vpTree.containsAll(points));
+        Assert.assertTrue(vpTree.containsAll(points));
 
         points.add(numberOfPoints + 1);
-        assertFalse(vpTree.containsAll(points));
+        Assert.assertFalse(vpTree.containsAll(points));
     }
 
     @Test
@@ -270,8 +271,8 @@ public class VPTreeTest {
             pointsFromIterator.add(iterator.next());
         }
 
-        assertEquals(points.size(), pointsFromIterator.size());
-        assertTrue(pointsFromIterator.containsAll(points));
+        Assert.assertEquals(points.size(), pointsFromIterator.size());
+        Assert.assertTrue(pointsFromIterator.containsAll(points));
     }
 
     @Test
@@ -289,7 +290,7 @@ public class VPTreeTest {
         assertEquals(vpTree.size(), array.length);
 
         for (final Object point : array) {
-            assertTrue(vpTree.contains(point));
+            Assert.assertTrue(vpTree.contains(point));
         }
     }
 
@@ -303,7 +304,7 @@ public class VPTreeTest {
             assertEquals(vpTree.size(), array.length);
 
             for (final Integer point : array) {
-                assertTrue(vpTree.contains(point));
+                Assert.assertTrue(vpTree.contains(point));
             }
         }
 
@@ -313,7 +314,7 @@ public class VPTreeTest {
             assertEquals(vpTree.size(), array.length);
 
             for (final Integer point : array) {
-                assertTrue(vpTree.contains(point));
+                Assert.assertTrue(vpTree.contains(point));
             }
         }
 
@@ -323,10 +324,10 @@ public class VPTreeTest {
             assertEquals(vpTree.size() + 1, array.length);
 
             for (int i = 0; i < vpTree.size(); i++) {
-                assertTrue(vpTree.contains(array[i]));
+                Assert.assertTrue(vpTree.contains(array[i]));
             }
 
-            assertNull(array[vpTree.size()]);
+            Assert.assertNull(array[vpTree.size()]);
         }
     }
 

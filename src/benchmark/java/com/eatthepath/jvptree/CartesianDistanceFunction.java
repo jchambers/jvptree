@@ -1,7 +1,6 @@
 package com.eatthepath.jvptree;
 
 import com.eatthepath.jvptree.DistanceFunction;
-import com.eatthepath.jvptree.CartesianPoint;
 
 public class CartesianDistanceFunction implements DistanceFunction<CartesianPoint> {
 
