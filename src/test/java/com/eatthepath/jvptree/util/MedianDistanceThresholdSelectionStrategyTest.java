@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eatthepath.jvptree.IntegerDistanceFunction;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MedianDistanceThresholdSelectionStrategyTest {
 
     @Test
-    public void testSelectThreshold() {
+    void testSelectThreshold() {
         final MedianDistanceThresholdSelectionStrategy<Number, Integer> strategy =
                 new MedianDistanceThresholdSelectionStrategy<>();
 
@@ -18,7 +20,7 @@ public class MedianDistanceThresholdSelectionStrategyTest {
             final List<Integer> singleIntegerList = new ArrayList<>();
             singleIntegerList.add(7);
 
-            Assert.assertEquals(7, (int)strategy.selectThreshold(singleIntegerList, 0, new IntegerDistanceFunction()));
+            assertEquals(7, (int)strategy.selectThreshold(singleIntegerList, 0, new IntegerDistanceFunction()));
         }
 
         {
@@ -33,13 +35,14 @@ public class MedianDistanceThresholdSelectionStrategyTest {
             multipleIntegerList.add(5);
             multipleIntegerList.add(7);
 
-            Assert.assertEquals(5, (int)strategy.selectThreshold(multipleIntegerList, 0, new IntegerDistanceFunction()));
+            assertEquals(5, (int)strategy.selectThreshold(multipleIntegerList, 0, new IntegerDistanceFunction()));
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSelectThresholdEmptyList() {
-        new MedianDistanceThresholdSelectionStrategy<Number, Integer>().selectThreshold(
-                new ArrayList<Integer>(), 0, new IntegerDistanceFunction());
+    @Test
+    void testSelectThresholdEmptyList() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new MedianDistanceThresholdSelectionStrategy<Number, Integer>().selectThreshold(
+                        new ArrayList<>(), 0, new IntegerDistanceFunction()));
     }
 }

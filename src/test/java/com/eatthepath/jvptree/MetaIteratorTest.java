@@ -1,35 +1,26 @@
 package com.eatthepath.jvptree;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetaIteratorTest {
 
     @Test
-    public void testHasNextAndNext() {
+    void testHasNextAndNext() {
         {
-            final MetaIterator<Object> emptyIterator = new MetaIterator<>(new ArrayList<Iterator<Object>>());
+            final MetaIterator<Object> emptyIterator = new MetaIterator<>(Collections.emptyList());
 
-            Assert.assertFalse("Empty iterators should not have a next element.", emptyIterator.hasNext());
+            assertFalse(emptyIterator.hasNext(), "Empty iterators should not have a next element.");
 
-            try {
-                emptyIterator.next();
-                Assert.fail("Empty iterators should throw NoSuchElementException for next element");
-            } catch (NoSuchElementException e) {
-                // This is supposed to happen for empty iterators
-            }
+            assertThrows(NoSuchElementException.class, emptyIterator::next,
+                    "Empty iterators should throw NoSuchElementException for next element");
         }
 
         {
-            final ArrayList<Integer> integers = new ArrayList<>();
-            integers.add(1);
-            integers.add(2);
-            integers.add(3);
+            final List<Integer> integers = Arrays.asList(1, 2, 3);
 
             final MetaIterator<Integer> singleIterator =
                     new MetaIterator<>(Collections.singletonList(integers.iterator()));
@@ -40,49 +31,36 @@ public class MetaIteratorTest {
                 integersFromIterator.add(singleIterator.next());
             }
 
-            Assert.assertEquals("Elements from iterator should match initial elements.",
-                    integers, integersFromIterator);
+            assertEquals(integers, integersFromIterator, "Elements from iterator should match initial elements.");
         }
 
         {
-            final ArrayList<Integer> firstIntegers = new ArrayList<>();
-            firstIntegers.add(1);
-            firstIntegers.add(2);
-            firstIntegers.add(3);
+            final List<Integer> firstIntegers = Arrays.asList(1, 2, 3);
+            final List<Integer> emptyList = Collections.emptyList();
+            final List<Integer> secondIntegers = Arrays.asList(4, 5, 6);
 
-            final ArrayList<Integer> emptyList = new ArrayList<>();
-
-            final ArrayList<Integer> secondIntegers = new ArrayList<>();
-            secondIntegers.add(4);
-            secondIntegers.add(5);
-            secondIntegers.add(6);
-
-            final ArrayList<Iterator<Integer>> iterators = new ArrayList<>();
-            iterators.add(firstIntegers.iterator());
-            iterators.add(emptyList.iterator());
-            iterators.add(secondIntegers.iterator());
+            @SuppressWarnings("RedundantOperationOnEmptyContainer") final List<Iterator<Integer>> iterators =
+                    Arrays.asList(firstIntegers.iterator(), emptyList.iterator(), secondIntegers.iterator());
 
             final MetaIterator<Integer> multipleIterator = new MetaIterator<>(iterators);
 
-            final ArrayList<Integer> integersFromIterator = new ArrayList<>();
+            final List<Integer> integersFromIterator = new ArrayList<>();
 
             while (multipleIterator.hasNext()) {
                 integersFromIterator.add(multipleIterator.next());
             }
 
-            final ArrayList<Integer> combinedList = new ArrayList<>();
+            final List<Integer> combinedList = new ArrayList<>();
             combinedList.addAll(firstIntegers);
             combinedList.addAll(emptyList);
             combinedList.addAll(secondIntegers);
 
-            Assert.assertEquals("Elements from iterator should match initial elements.",
-                    combinedList, integersFromIterator);
+            assertEquals(combinedList, integersFromIterator, "Elements from iterator should match initial elements.");
         }
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testRemove() {
-        new MetaIterator<>(new ArrayList<Iterator<Object>>()).remove();
+    @Test
+    void testRemove() {
+        assertThrows(UnsupportedOperationException.class, () -> new MetaIterator<>(Collections.emptyList()).remove());
     }
-
 }
