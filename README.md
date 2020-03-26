@@ -76,8 +76,7 @@ Once you have your distance function, you can create a vp-tree that stores the l
 
 ```java
 final VPTree<CartesianPoint, SpaceInvader> vpTree =
-        new VPTree<CartesianPoint, SpaceInvader>(
-                new CartesianDistanceFunction(), enemies);
+        new VPTree<>(new CartesianDistanceFunction(), enemies);
 ```
 
 In this case, we provide all of our points at construction time, but you may also create an empty tree and add points later. The `VPTree` class implements Java's [`Collection`](http://docs.oracle.com/javase/7/docs/api/java/util/Collection.html) interface and supports all optional operations.

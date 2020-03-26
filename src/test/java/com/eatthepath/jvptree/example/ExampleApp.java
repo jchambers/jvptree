@@ -19,11 +19,10 @@ public class ExampleApp {
             }
         };
 
-        final List<SpaceInvader> enemies = new ArrayList<SpaceInvader>();
+        final List<SpaceInvader> enemies = new ArrayList<>();
 
         final VPTree<CartesianPoint, SpaceInvader> vpTree =
-                new VPTree<CartesianPoint, SpaceInvader>(
-                        new CartesianDistanceFunction(), enemies);
+                new VPTree<>(new CartesianDistanceFunction(), enemies);
 
         final List<SpaceInvader> nearestEnemies =
                 vpTree.getNearestNeighbors(playerPosition, 10);
