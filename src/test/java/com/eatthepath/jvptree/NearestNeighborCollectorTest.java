@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class NearestNeighborCollectorTest {
 
     @Test
     public void testOfferPointAndGetFarthestPoint() {
-        assertNull("Farthest point in an empty collector should be null.", this.collector.getFarthestPoint());
+        Assert.assertNull("Farthest point in an empty collector should be null.", this.collector.getFarthestPoint());
 
         this.collector.offerPoint(17);
         assertEquals("Farthest point in collector with single element should be the single element",
@@ -52,7 +53,7 @@ public class NearestNeighborCollectorTest {
 
     @Test
     public void testToSortedList() {
-        assertTrue("Sorted list from empty collector should be empty.",
+        Assert.assertTrue("Sorted list from empty collector should be empty.",
                 this.collector.toSortedList().isEmpty());
 
         this.collector.offerPoint(19);
@@ -69,7 +70,7 @@ public class NearestNeighborCollectorTest {
         final ArrayList<Integer> expectedList = new ArrayList<>();
         java.util.Collections.addAll(expectedList, 1, 2, 3, 4, 5);
 
-        assertEquals(CAPACITY, expectedList.size());
+        Assert.assertEquals(CAPACITY, expectedList.size());
         assertEquals(expectedList, this.collector.toSortedList());
     }
 }

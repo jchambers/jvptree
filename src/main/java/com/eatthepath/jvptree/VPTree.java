@@ -49,7 +49,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
     /**
      * Constructs a new vp-tree that uses the given distance function and is initially empty. The constructed tree will
      * use a default {@link SamplingMedianDistanceThresholdSelectionStrategy} and node capacity
-     * ({@value com.eatthepath.jvptree.VPTree#DEFAULT_NODE_CAPACITY} points).
+     * ({@value VPTree#DEFAULT_NODE_CAPACITY} points).
      *
      * @param distanceFunction the distance function to use to calculate the distance between points
      */
@@ -61,7 +61,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
      * Constructs a new vp-tree that uses the given distance function and is initially populated with the given
      * collection of points. The constructed tree will use a default
      * {@link SamplingMedianDistanceThresholdSelectionStrategy} and node capacity
-     * ({@value com.eatthepath.jvptree.VPTree#DEFAULT_NODE_CAPACITY} points).
+     * ({@value VPTree#DEFAULT_NODE_CAPACITY} points).
      *
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param points the points with which this tree should be initially populated; may be {@code null}
@@ -75,7 +75,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
     /**
      * Constructs a new vp-tree that uses the given distance function and threshold selection strategy to partition
      * points. The tree will be initially empty and will have a default node capacity
-     * ({@value com.eatthepath.jvptree.VPTree#DEFAULT_NODE_CAPACITY} points).
+     * ({@value VPTree#DEFAULT_NODE_CAPACITY} points).
      *
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes
@@ -87,7 +87,7 @@ public class VPTree<P, E extends P> implements SpatialIndex<P, E> {
     /**
      * Constructs a new vp-tree that uses the given distance function and threshold selection strategy to partition
      * points. The tree will be initially populated with the given collection of points and will have a default node
-     * capacity ({@value com.eatthepath.jvptree.VPTree#DEFAULT_NODE_CAPACITY} points).
+     * capacity ({@value VPTree#DEFAULT_NODE_CAPACITY} points).
      *
      * @param distanceFunction the distance function to use to calculate the distance between points
      * @param thresholdSelectionStrategy the function to use to choose distance thresholds when partitioning nodes

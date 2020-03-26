@@ -6,7 +6,7 @@
     </head>
 
     <body>
-        <h1>jvptree</h1>
+        <h1>com.eatthepath.jvptree</h1>
 
         <p>Jvptree is a generic <a href="https://en.wikipedia.org/wiki/Vantage-point_tree">vantage-point tree</a> implementation that allows for quick (<em>O(log(n))</em>) searches for the nearest neighbors to a given point. Vantage-point trees are binary space partitioning trees that partition points according to their distance from each node's "vantage point." Points that are closer than a chosen threshold go into one child node, while points that are farther away go into the other. Vantage point trees operate on any <a href="https://en.wikipedia.org/wiki/Metric_space">metric space</a>.</p>
 
@@ -27,7 +27,7 @@
 
         <h3>Threshold selection strategies</h3>
 
-        <p>You may optionally specify a strategy for choosing a distance threshold for partitioning. By default, jvptree will use sampling median strategy, where it will take the median distance from a small subset of the points to partition. Jvptree also includes a threshold selection strategy that takes the median of <em>all</em> points to be partitioned; this is slower, but may result in a more balanced tree. Most users will not need to specify a threshold selection strategy.</p>
+        <p>You may optionally specify a strategy for choosing a distance threshold for partitioning. By default, com.eatthepath.jvptree will use sampling median strategy, where it will take the median distance from a small subset of the points to partition. Jvptree also includes a threshold selection strategy that takes the median of <em>all</em> points to be partitioned; this is slower, but may result in a more balanced tree. Most users will not need to specify a threshold selection strategy.</p>
 
         <h3>Node capacity</h3>
 

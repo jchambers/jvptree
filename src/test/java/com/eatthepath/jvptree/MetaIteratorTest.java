@@ -1,12 +1,11 @@
 package com.eatthepath.jvptree;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class MetaIteratorTest {
@@ -16,11 +15,11 @@ public class MetaIteratorTest {
         {
             final MetaIterator<Object> emptyIterator = new MetaIterator<>(new ArrayList<Iterator<Object>>());
 
-            assertFalse("Empty iterators should not have a next element.", emptyIterator.hasNext());
+            Assert.assertFalse("Empty iterators should not have a next element.", emptyIterator.hasNext());
 
             try {
                 emptyIterator.next();
-                fail("Empty iterators should throw NoSuchElementException for next element");
+                Assert.fail("Empty iterators should throw NoSuchElementException for next element");
             } catch (NoSuchElementException e) {
                 // This is supposed to happen for empty iterators
             }
@@ -41,7 +40,7 @@ public class MetaIteratorTest {
                 integersFromIterator.add(singleIterator.next());
             }
 
-            assertEquals("Elements from iterator should match initial elements.",
+            Assert.assertEquals("Elements from iterator should match initial elements.",
                     integers, integersFromIterator);
         }
 
@@ -76,7 +75,7 @@ public class MetaIteratorTest {
             combinedList.addAll(emptyList);
             combinedList.addAll(secondIntegers);
 
-            assertEquals("Elements from iterator should match initial elements.",
+            Assert.assertEquals("Elements from iterator should match initial elements.",
                     combinedList, integersFromIterator);
         }
     }

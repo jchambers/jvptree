@@ -1,14 +1,11 @@
 package com.eatthepath.jvptree.util;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
 import com.eatthepath.jvptree.IntegerDistanceFunction;
-import com.eatthepath.jvptree.util.MedianDistanceThresholdSelectionStrategy;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class MedianDistanceThresholdSelectionStrategyTest {
 
@@ -21,7 +18,7 @@ public class MedianDistanceThresholdSelectionStrategyTest {
             final List<Integer> singleIntegerList = new ArrayList<>();
             singleIntegerList.add(7);
 
-            assertEquals(7, (int)strategy.selectThreshold(singleIntegerList, 0, new IntegerDistanceFunction()));
+            Assert.assertEquals(7, (int)strategy.selectThreshold(singleIntegerList, 0, new IntegerDistanceFunction()));
         }
 
         {
@@ -36,7 +33,7 @@ public class MedianDistanceThresholdSelectionStrategyTest {
             multipleIntegerList.add(5);
             multipleIntegerList.add(7);
 
-            assertEquals(5, (int)strategy.selectThreshold(multipleIntegerList, 0, new IntegerDistanceFunction()));
+            Assert.assertEquals(5, (int)strategy.selectThreshold(multipleIntegerList, 0, new IntegerDistanceFunction()));
         }
     }
 
