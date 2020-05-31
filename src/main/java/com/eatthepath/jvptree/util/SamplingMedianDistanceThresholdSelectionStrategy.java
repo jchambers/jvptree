@@ -19,6 +19,14 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<P, E extends P> ex
     public static final int DEFAULT_NUMBER_OF_SAMPLES = 32;
 
     /**
+     * Constructs a threshold selector that uses up to a default ({@value DEFAULT_NUMBER_OF_SAMPLES}) number of samples
+     * from a list of points to choose a median distance.
+     */
+    public SamplingMedianDistanceThresholdSelectionStrategy() {
+        this(DEFAULT_NUMBER_OF_SAMPLES);
+    }
+
+    /**
      * Constructs a threshold selector that uses up to the given number of samples from a list of points to choose a
      * median distance.
      *
@@ -52,13 +60,13 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<P, E extends P> ex
      */
     private List<E> getSampledPoints(final List<E> points) {
         final List<E> sampledPoints;
-        final int numberOfPoints = points.size();
 
-        if (numberOfPoints > this.numberOfSamples) {
+        if (points.size() > this.numberOfSamples) {
             sampledPoints = new ArrayList<>(this.numberOfSamples);
+            final int step = points.size() / this.numberOfSamples;
 
             for (int i = 0; i < this.numberOfSamples; i++) {
-                sampledPoints.add(points.get((i * numberOfPoints) / this.numberOfSamples));
+                sampledPoints.add(points.get(i * step));
             }
         } else {
             sampledPoints = points;
