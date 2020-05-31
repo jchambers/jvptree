@@ -5,6 +5,7 @@ import com.eatthepath.jvptree.IntegerDistanceFunction;
 import org.junit.jupiter.api.Test;
 
 import java.util.AbstractList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -30,7 +31,16 @@ class SamplingMedianDistanceThresholdSelectionStrategyTest {
     }
 
     @Test
-    void selectThreshold() {
+    void getSampledPoints() {
+        final SamplingMedianDistanceThresholdSelectionStrategy<Integer, Integer> strategy =
+                new SamplingMedianDistanceThresholdSelectionStrategy<>(5);
+
+        assertEquals(Arrays.asList(1, 3, 5, 7, 9),
+                strategy.getSampledPoints(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
+    }
+
+    @Test
+    void selectThresholdOverflow() {
         final SamplingMedianDistanceThresholdSelectionStrategy<Integer, Integer> strategy =
                 new SamplingMedianDistanceThresholdSelectionStrategy<>();
 
