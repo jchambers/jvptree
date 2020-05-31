@@ -58,7 +58,7 @@ public class SamplingMedianDistanceThresholdSelectionStrategy<P, E extends P> ex
      *
      * @return a list containing at most the number of points chosen at construction time
      */
-    private List<E> getSampledPoints(final List<E> points) {
+    List<E> getSampledPoints(final List<E> points) {
         final List<E> sampledPoints;
 
         if (points.size() > this.numberOfSamples) {
